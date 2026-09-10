@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "structure-placebo: placebo controls for structure-aware metaheuristics"
+abstract: >-
+  Implementation of two controls that test whether a structural score in a
+  population-based optimizer carries search-relevant information: permutation
+  of the score across nodes, and randomisation of an adaptive selection rule.
+  Includes the audit protocol, the statistical machinery, and the study data.
+authors:
+  - name: "Anonymous Author"
+type: software
+license: MIT
+repository-code: "https://github.com/anonymerauthor/structure-placebo"
+keywords:
+  - metaheuristics
+  - experimental methodology
+  - ablation
+  - permutation test
+  - swarm intelligence
+  - reproducibility

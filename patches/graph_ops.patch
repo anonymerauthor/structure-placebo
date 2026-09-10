@@ -1,0 +1,76 @@
+--- a/social/graph_ops.py
++++ b/social/graph_ops.py
+@@ -40,7 +40,17 @@
+     if cache is not None and mode in cache:
+         return cache[mode]
+     
+-    if mode == "betweenness":
++    if mode == "shuffled_betweenness":
++        # Placebo control: same betweenness value distribution, but the
++        # association between a node's structural position and its weight is
++        # destroyed. Isolates "does the structure inform the search?" from
++        # "does a heterogeneous weight distribution help?".
++        base = nx.betweenness_centrality(G)
++        nodes = list(base.keys())
++        vals = np.array([base[n] for n in nodes])
++        rs = np.random.default_rng(abs(hash(tuple(sorted(G.edges())))) % (2**32))
++        cent = {n: float(v) for n, v in zip(nodes, rs.permutation(vals))}
++    elif mode == "betweenness":
+         # Betweenness centrality (SOCIAL paper default)
+         # Use approximate for large graphs
+         if len(G) > 500:
+@@ -85,9 +95,23 @@
+     n = len(fitness_values)
+     if n == 0:
+         return np.array([])
+-    
++
+     if n == 1:
+         return np.array([1.0])
++
++    if mode == "shuffled_rank":
++        # Positive control for the permutation test. SOCIAL weights neighbours
++        # by two scores: structural centrality and this fitness influence.
++        # Permuting the influence values across nodes destroys a genuinely
++        # informative signal -- who is actually fitter -- while preserving the
++        # value distribution exactly, as the centrality control does. A test
++        # that cannot detect this has no power to detect anything.
++        base = compute_fitness_influence(fitness_values, mode="rank")
++        # Seeded from the values themselves so the run stays reproducible
++        # without drawing from the optimizer's own random stream, which would
++        # desynchronise the paired comparison against the other arms.
++        seed = int(abs(hash(fitness_values.tobytes()))) % (2 ** 32)
++        return np.random.default_rng(seed).permutation(base)
+     
+     if mode == "rank":
+         # Rank-based influence: best fitness gets rank 0, worst gets rank N-1
+@@ -150,7 +174,8 @@
+             nswap = max(1, int(rewire_prob * G.number_of_edges()))
+             try:
+                 nx.double_edge_swap(G, nswap=nswap, max_tries=1000, seed=rng)
+-            except nx.NetworkXError:
++                G.graph['_rewire_count'] = G.graph.get('_rewire_count', 0) + 1
++            except nx.NetworkXException:
+                 pass
+     
+     elif mode == "stagnation":
+@@ -158,7 +183,8 @@
+             nswap = max(1, int(0.15 * G.number_of_edges()))
+             try:
+                 nx.double_edge_swap(G, nswap=nswap, max_tries=1000, seed=rng)
+-            except nx.NetworkXError:
++                G.graph['_rewire_count'] = G.graph.get('_rewire_count', 0) + 1
++            except nx.NetworkXException:
+                 pass
+     
+     elif mode == "diversity":
+@@ -173,7 +199,8 @@
+                 nswap = max(1, int(0.1 * G.number_of_edges()))
+                 try:
+                     nx.double_edge_swap(G, nswap=nswap, max_tries=1000, seed=rng)
+-                except nx.NetworkXError:
++                    G.graph['_rewire_count'] = G.graph.get('_rewire_count', 0) + 1
++                except nx.NetworkXException:
+                     pass
+     
+     return G

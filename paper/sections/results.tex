@@ -1,0 +1,260 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{The mechanism is far from inert}
+\label{sec:res:magnitude}
+
+Before asking whether the centrality weighting is informative we establish that
+it is active, since a control on an inert mechanism is uninformative
+(Section~\ref{sec:leverage}). Fig.~\ref{fig:magnitude} reports the normalised
+displacement $\rho$ of \eqref{eq:relshift} for the graph configurations used in
+the original report and in its reference implementation.
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_mechanism_magnitude}
+\caption{Displacement induced by centrality weighting, in units of the
+population's own spread. The mechanism moves each update by a quarter to a
+third of the population spread; it is not a small correction.}
+\label{fig:magnitude}
+\end{figure}
+
+Across the published and implemented settings $\rho$ ranges from $0.25$ to
+$0.31$: the centrality-weighted aggregate differs from the plain neighbourhood
+mean by roughly a third of the population's spread. The coefficient of
+variation of betweenness over nodes is $0.65$--$0.89$, so the weights are
+strongly heterogeneous rather than near-uniform.
+
+Two predictions of Section~\ref{sec:leverage} are confirmed directly. On the
+ring lattice ($p=0$), which is vertex-transitive, we measure
+$\rho = 3.1\times10^{-17}$: the mechanism is inert by construction, exactly as
+$\chi_i \equiv 0$ requires. And because betweenness is exactly zero at many
+nodes of a sparse small-world graph, the guard $\varepsilon$ drives the
+within-neighbourhood weight ratio to $O(10^{6})$--$O(10^{7})$: the operator
+behaves as hard masking rather than soft weighting.
+
+\subsection{The assignment carries no information}
+\label{sec:res:placebo}
+
+Table~\ref{tab:placebo} and Fig.~\ref{fig:forest} give the comparison between
+the published method and its permutation control.
+
+\begin{table}[t]
+\caption{\textsc{Social} against its permutation control. Paired Wilcoxon per
+function with Holm correction; $\bar{\delta}$ is the mean effect over the
+suite and the interval is its $90\%$ bootstrap CI. No comparison yields a
+single significant difference.}
+\label{tab:placebo}
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccccl@{}}
+\toprule
+Suite & $D$ & Budget & $n_f$ & W/L & $\bar{\delta}$ [90\% CI] \\
+\midrule
+Classic & 30 & $2.0\!\times\!10^{4}$  & 10 & 0/0 & $+0.048$ \\
+Classic & 30 & $1.05\!\times\!10^{5}$ & 10 & 0/0 & $+0.078$ \\
+CEC2017 & 10 & $1.0\!\times\!10^{5}$  & 28 & 0/0 & $-0.004$ $[-0.034,+0.026]$ \\
+CEC2017 & 30 & $3.0\!\times\!10^{5}$  & 28 & 0/0 & $-0.010$ $[-0.038,+0.020]$ \\
+CEC2017 & 50 & $5.0\!\times\!10^{5}$  & 28 & 0/0 & $-0.032$ $[-0.066,+0.002]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_placebo_forest}
+\caption{Effect of destroying the structure--weight correspondence, per
+function, with bootstrap intervals. Shading marks the negligible band
+$|\delta|<0.147$. No interval excludes zero after correction.}
+\label{fig:forest}
+\end{figure*}
+
+On $104$ function comparisons spanning two suites, three dimensions, five
+budgets and a twenty-fivefold range of evaluation counts, permuting betweenness
+values across nodes changes nothing that survives correction. The largest
+effect anywhere is $|\delta|=0.26$; suite means are within $\pm0.08$ of zero. A
+mechanism that displaces every update by a third of the population spread can
+have its node-to-score assignment randomised without measurable consequence.
+
+The dimensional invariance is a prediction of the framework rather than an
+additional observation. By \eqref{eq:leverage} the structural leverage
+$\chi_i$ depends only on the graph and the score vector, not on $D$, so the
+mechanism's strength---and hence what its randomisation can destroy---should
+not change with dimension. Across the three protocol dimensions the suite-level
+effect is $-0.004$, $-0.010$ and $-0.032$, all equivalent to zero within
+$|\delta|<0.10$ and the first two within $|\delta|<0.05$.
+
+\subsection{Equivalence, and the limits of the present design}
+\label{sec:res:tost}
+
+A non-significant difference is not equivalence, so we test the latter
+directly (Section~\ref{sec:stats}). Here the answer depends on the level of
+aggregation, and we report both.
+
+At the level of the suite, equivalence holds comfortably, and tightens with
+sample size. At $D=30$ with the $51$ runs the CEC2017 protocol prescribes, the
+mean effect over the $28$ functions is $\bar{\delta}=-0.010$ with a $90\%$
+interval of $[-0.038,+0.020]$: contained not only in the negligible band but in
+the far stricter $|\delta|<0.05$. A one-sample Wilcoxon test on the
+per-function effects gives $p=0.34$. At $D=10$ with $30$ runs the mean effect
+is $-0.004$, interval $[-0.034,+0.026]$, likewise inside $|\delta|<0.05$.
+
+Per function the picture is different, and the reason is worth separating into
+two parts. Raising the runs from $30$ to $51$ narrows the median $90\%$
+half-width from $0.181$ to $0.139$---exactly the $\sqrt{30/51}$ the sampling
+theory predicts---and raises the count of formally equivalent functions from
+$1$ to $6$ of $28$. It does not raise it further, because equivalence at margin
+$m$ requires $|\hat{\delta}|+\text{half-width}<m$, not merely
+$\text{half-width}<m$: with a median $|\hat{\delta}|$ of $0.063$, reaching
+$|\delta|<0.147$ on the median function would take roughly $100$ runs. And no
+sample size suffices for all of them: on $4$ of $28$ functions the estimated
+effect already exceeds $0.147$, so a genuine, if small, difference is present
+there. At the small-effect margin $|\delta|<0.33$, $26$ of $28$ are equivalent.
+
+Fig.~\ref{fig:equivalence} shows the intervals directly. Most sit inside the
+band but cross its edge, which is the visual form of the distinction this
+subsection draws: failing to detect a difference is not the same as
+establishing its absence, and only the intervals lying wholly inside the margin
+do the latter.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_equivalence}
+\caption{Equivalence testing per function, published method against its
+permutation control. Shading marks the negligible band $|\delta|<0.147$; an
+interval contained in it establishes equivalence at $\alpha=0.05$. Most
+intervals straddle the boundary, so the per-function question stays open even
+where the difference test is comfortably non-significant.}
+\label{fig:equivalence}
+\end{figure*}
+
+We state the conclusion at the strength the evidence supports, which is not
+that the two arms are identical. Across the suite the assignment of centrality
+scores to graph positions has an effect equivalent to zero within a margin four
+times stricter than the negligibility threshold. Per function, effects are
+bounded within a small margin, a handful are near the negligibility boundary,
+and none survives correction as a difference.
+
+\subsection{Heterogeneity does what the assignment does not}
+\label{sec:res:p1p2}
+
+Section~\ref{sec:claim} separated two properties that ablation confounds. The
+data separate them too. Comparing the permutation control against uniform
+mixing on the same graph isolates (P1), heterogeneity, with the assignment
+already destroyed: \permcontrol{} beats \textsc{Unif}$_4$ on $3$ of $28$
+CEC2017 functions ($F_{12}$, $F_{22}$, $F_{23}$; $\delta=-0.37,-0.53,-0.74$;
+Holm-corrected $p\le0.013$) and loses on none. Comparing \textsc{Social}
+against \permcontrol{} isolates (P2), the assignment: $0$ of $28$.
+
+Unequal weights therefore help slightly; \emph{which} neighbour receives the
+large weight does not matter at all. An ablation reports the sum of the two and
+attributes it to structure. This is the confound of Section~\ref{sec:claim},
+measured.
+
+The practical consequence is immediate. Betweenness is roughly $30\%$ of
+per-iteration runtime and can be replaced by any heterogeneous weighting---a
+fixed random draw suffices---at no cost in solution quality.
+
+\subsection{Calibrating the instrument}
+\label{sec:res:calibration}
+
+A null result is worth only as much as the test's ability to return a non-null
+one. We therefore ran the same controls on two further mechanisms of the same
+optimizer, on the same suite, at the same sample size and with the same
+statistic. Fig.~\ref{fig:calibration} places the three side by side.
+
+\emph{Fitness influence} (Section~\ref{sec:positive}) is the positive control:
+the permuted score is a direct function of objective values the run has already
+paid for. Permuting it does cost performance, but less uniformly than we
+expected. At suite level the effect is $\bar{\delta}=-0.051$ with $90\%$
+interval $[-0.117,+0.008]$, which includes zero; $17$ of $28$ functions favour
+the unpermuted arm. The effect is concentrated by problem class: $-0.150$ on
+the nine composition functions and $-0.152$ on the two unimodal ones, against
+$+0.012$ on hybrids and $+0.016$ on simple multimodals. On $F_{23}$ it reaches
+$\delta=-0.80$ with Holm-corrected $p=0.003$.
+
+That single function settles the power question for the permutation control:
+the same procedure, applied to a different score on the same optimizer, detects
+an effect of $0.80$. It is not blind. Applied to the centrality assignment it
+returns $-0.010$ with an interval four times inside the negligibility margin.
+
+\emph{Adaptive selection} is the policy control applied to \textsc{Ads}, which
+chooses neighbourhood degree online by sliding-window UCB on observed
+improvement. Here the instrument returns a clear signal: $\bar{\delta}=-0.101$
+with interval $[-0.149,-0.061]$ excluding zero, a one-sample Wilcoxon
+$p=1.5\times10^{-5}$, and $24$ of $28$ functions favouring informed selection
+over uniform switching.
+
+Two points follow, and the second corrects an earlier reading of our own
+results. First, the ordering across the three contrasts---null, intermediate,
+clear---is exactly what a working instrument should produce, and it is produced
+without any change of suite, sample size or statistic. Second, per-function
+Holm correction across $28$ comparisons is conservative enough to hide a real
+suite-level effect: it credits \textsc{Ads} with wins on only $3$ functions,
+which reads as a weak effect, while the suite-level estimate is unambiguous.
+Where a mechanism's benefit is diffuse rather than concentrated, the
+per-function view understates it, and both should be reported.
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_calibration}
+\caption{The same controls on three mechanisms of the same optimizer, on
+CEC2017 at $D=30$. Points are per-function effects, intervals are $90\%$
+bootstrap CIs on the suite mean. The instrument separates a null mechanism from
+an intermediate and a clear one without changing suite, sample size or
+statistic.}
+\label{fig:calibration}
+\end{figure}
+
+Mean ranks over the six arms at $D=30$ (Fig.~\ref{fig:ranks}) place the two
+sparse arms first (\textsc{Social} $3.121$, \permcontrol{} $3.170$), then
+uniform mixing ($3.335$), with the density-varying arms last
+($3.676$--$3.977$). That \textsc{Social} and \permcontrol{} are adjacent,
+separated by $0.05$ rank units with overlapping standard errors, is the finding
+of Section~\ref{sec:res:placebo} in another form. Per-function medians for all
+six arms are given in Table~\ref{tab:cec30}.
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_ranks}
+\caption{Mean Friedman ranks on CEC2017 at $D=30$, with standard errors over
+the $28$ functions. The published method and its permutation control are
+adjacent and overlapping.}
+\label{fig:ranks}
+\end{figure}
+
+\input{tables/cec2017_D30}
+
+\subsection{What density does}
+\label{sec:res:density}
+
+A sweep over $K\in\{4,8,16,32,59\}$ across $49$ problem configurations at their
+native dimensions, $7{,}350$ runs, finds neighbourhood size to matter in $30$
+of $49$ (Friedman $p<0.05$), with rank spreads up to $3.9$ of a possible $5$
+and $p$ as small as $2\times10^{-23}$. Where it matters the effect is large;
+in the remaining $19$ configurations it is undetectable.
+
+The optimum is problem- and dimension-dependent. Ruggedness, measured as the
+lag-one autocorrelation of fitness along a random walk and therefore computable
+online, correlates with the preference for dense neighbourhoods at
+$\rho_{s}=-0.61$ ($p=3.7\times10^{-4}$) over the configurations where density
+matters (Fig.~\ref{fig:density}).
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_density_law}
+\caption{Preference for dense neighbourhoods against landscape ruggedness,
+over the $30$ configurations in which density has a significant effect. The
+association is moderate and carried largely by the most rugged functions.}
+\label{fig:density}
+\end{figure} That correlation is carried largely by the three most rugged
+functions, and it vanishes at $D=10$ ($\rho_{s}=-0.15$, $p=0.63$) while holding
+at $D=30$ ($-0.73$) and $D=50$ ($-0.63$). \textsc{Penalized} and
+\textsc{Penalized2} are clear counterexamples, smooth by the proxy yet
+preferring the densest neighbourhood at every dimension.
+
+Density is thus consequential, not predictable in advance from this
+descriptor, and not constant across dimension---an argument for adapting it
+rather than fixing it by a topology prior, and simultaneously an argument
+against predicting it from landscape features.

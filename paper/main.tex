@@ -1,0 +1,92 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}[proposition]{Corollary}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{siunitx}
+\sisetup{group-separator={,},group-minimum-digits=4}
+
+\graphicspath{{figures/}}
+
+\newcommand{\social}{\textsc{Social}}
+\newcommand{\permcontrol}{\textsc{Perm}}
+\newcommand{\polcontrol}{\textsc{Rand}}
+
+\begin{document}
+
+\title{Does the Structure Do the Work? Placebo Controls for\\
+Structure-Aware Metaheuristics}
+
+% Author block withheld in the public copy. Fill in before submission.
+\author{Anonymous Author%
+\thanks{Manuscript prepared \today.}}
+
+\markboth{IEEE Transactions on Evolutionary Computation}%
+{Placebo Controls for Structure-Aware Metaheuristics}
+
+\maketitle
+
+\begin{abstract}
+Structure-aware metaheuristics weight population interactions by a structural
+score, on the claim that the score identifies informative agents. The usual
+evidence is an ablation, which cannot establish that claim: deleting the
+weighting changes the mixing operator as well as the information it carries,
+so any difference is equally consistent with the weights having been merely
+unequal. We separate the two by permuting the score across nodes, which leaves
+the mechanism at full strength and destroys only the correspondence between a
+node's position and its weight. We prove this control equals uniform mixing in
+expectation while retaining the original's weight heterogeneity pathwise, and
+bound when such a comparison is informative at all. A second control randomises
+an adaptive component's selection rule. Applied to a published betweenness-weighted
+small-world optimizer, the mechanism proves active---displacing each update by
+a third of the population's spread---and uninformative: over $104$ function
+comparisons on two suites, three dimensions and five budgets, permutation changes
+nothing that survives correction, and at suite level the effect is equivalent
+to zero within a margin four times stricter than negligibility. Applying the
+instrument unchanged to two further mechanisms calibrates it, returning an
+intermediate effect on the fitness-influence weighting and a clear one on
+adaptive density selection ($\bar{\delta}=-0.101$, $p=1.5\times10^{-5}$): the
+null is a property of the mechanism, not of a test without power. Separating
+the confounded properties shows unequal weights help on $3$ of $28$ functions
+while the assignment helps on none, so betweenness---about $30\%$ of
+runtime---can be replaced by any heterogeneous weighting at no cost. What
+carries information here is not the scores computed on the graph but its coarse
+density.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Metaheuristics, ablation studies, experimental methodology, swarm
+intelligence, network topology, reproducibility.
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+\input{sections/intro}
+\input{sections/related}
+\input{sections/method}
+
+\input{sections/setup}
+\input{sections/results}
+
+\input{sections/discussion}
+\input{sections/threats}
+\input{sections/conclusion}
+
+\section*{Reproducibility}
+All code, per-run result files, random seeds, and the scripts that produce
+every figure and table in this paper are available at
+\url{https://github.com/anonymerauthor/structure-placebo}. Each run is stored as an individual
+record keyed by (variant, function, dimension, seed), so any single number
+in the paper can be traced to the run that produced it.
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

@@ -1,0 +1,230 @@
+\section{A Framework for Testing Structural Attribution}
+\label{sec:method}
+
+\subsection{A common form for structure-aware updates}
+\label{sec:form}
+
+Let $V=\{1,\dots,N\}$ index a population of candidate solutions with positions
+$X_t \in \mathbb{R}^{N \times D}$, whose $i$th row $x_{i,t}$ is one solution,
+and let $G_t=(V,E_t)$ be the interaction graph at iteration $t$ with
+neighbourhoods $\mathcal{N}_i$ and degrees $d_i=|\mathcal{N}_i|$.
+
+A broad family of population methods---cellular evolutionary
+algorithms~\cite{alba2005exploration}, neighbourhood-topology particle
+swarms~\cite{kennedy2002population}, localized consensus
+dynamics~\cite{bungert2024polarized}, and the centrality-weighted optimizer we
+study~\cite{jalali2026social}---share the update
+%
+\begin{equation}
+\label{eq:master}
+X_{t+1} \;=\; (1-\eta_t)\,X_t \;+\; \eta_t\Bigl[\, \textstyle\sum_{r} \theta_{r,t}\, W^{(r)}_t X_t \;+\; B_t \,\Bigr] \;+\; \Xi_t ,
+\end{equation}
+%
+where each $W^{(r)}_t \in \mathbb{R}^{N\times N}$ is row-stochastic and
+supported on $E_t$, the $\theta_{r,t}$ are non-negative schedule weights,
+$B_t$ collects rank-one drift terms toward incumbents, and $\Xi_t$ is a
+mutation or noise term. Everything specific to a structure-aware method sits
+in how the mixing operators $W^{(r)}_t$ are built from the graph.
+
+The construction under test assigns each node a structural score
+$c_t : V \to \mathbb{R}_{\ge 0}$---betweenness centrality in our primary case
+study---and weights neighbours in proportion to it:
+%
+\begin{equation}
+\label{eq:W}
+\bigl[W(c)\bigr]_{ij} \;=\;
+\frac{\bigl(c(j)+\varepsilon\bigr)\,\mathbf{1}\{j \in \mathcal{N}_i\}}
+     {\sum_{k \in \mathcal{N}_i}\bigl(c(k)+\varepsilon\bigr)} ,
+\end{equation}
+%
+with $\varepsilon>0$ guarding against neighbourhoods of all-zero score. Write
+$w_i = \bigl(W(c)\bigr)_{i,\cdot}$ restricted to $\mathcal{N}_i$, and let
+$u_i = d_i^{-1}\mathbf{1}$ denote the uniform weighting, i.e.\ the operator
+$W_{\mathrm{unif}}$ of the same graph with no structural score at all.
+
+\subsection{What the structural claim asserts, and what it does not}
+\label{sec:claim}
+
+The published justification for \eqref{eq:W} is that betweenness identifies
+agents positioned to bridge regions of the search space, so that learning
+preferentially from them propagates useful information. Formally this is a
+claim about the \emph{assignment} $v \mapsto c(v)$: that the pairing of scores
+to graph positions, and thereby to the solutions those positions hold, is
+informative about where to search.
+
+Two distinct properties of \eqref{eq:W} could each produce a performance
+difference, and they are routinely conflated:
+%
+\begin{enumerate}
+\item[(P1)] \textbf{Heterogeneity.} The weights $w_i$ are unequal, so the
+  update is not the neighbourhood mean. This changes the operator's spectrum
+  and the effective mixing rate regardless of which node gets which score.
+\item[(P2)] \textbf{Assignment.} \emph{Which} neighbour receives the large
+  weight correlates with search-relevant structure.
+\end{enumerate}
+%
+The claim being made is (P2). A conventional ablation---replacing $W(c)$ by
+$W_{\mathrm{unif}}$---removes (P1) and (P2) simultaneously and therefore
+cannot adjudicate it. This is the gap our controls close.
+
+\subsection{Control 1: value permutation}
+\label{sec:perm}
+
+Let $\pi$ be a permutation of $V$ drawn uniformly at random, independently of
+the search state, and resampled whenever the graph changes. The permutation
+control replaces $W(c)$ by $W(c \circ \pi)$, leaving \eqref{eq:master},
+the graph, the schedule, the budget and the random stream untouched.
+
+The multiset of scores $\{\!\{c(v)\}\!\}_{v \in V}$ is preserved exactly, as is
+the arithmetic cost of forming the operator. Destroyed is precisely the
+correspondence (P2). The following two facts make this the right control.
+
+\begin{proposition}[Uniform first moment]
+\label{prop:mean}
+For every $i$ and every $j \in \mathcal{N}_i$,
+$\;\mathbb{E}_\pi\bigl[W(c \circ \pi)\bigr]_{ij} = 1/d_i$; equivalently
+$\mathbb{E}_\pi\bigl[W(c \circ \pi)\bigr] = W_{\mathrm{unif}}$.
+\end{proposition}
+
+\begin{IEEEproof}
+Fix $i$. Under a uniform permutation the scores
+$\bigl(c(\pi(j))\bigr)_{j \in \mathcal{N}_i}$ form an exchangeable random
+vector, being a sample without replacement from
+$\{\!\{c(v)\}\!\}_{v\in V}$. The map in \eqref{eq:W} is a ratio of a
+coordinate to the sum of coordinates and hence equivariant under permutation
+of $\mathcal{N}_i$, so $\bigl(w_{ij}\bigr)_{j\in\mathcal{N}_i}$ is itself
+exchangeable. Exchangeable coordinates have equal means, and they sum to one
+almost surely; therefore each mean equals $1/d_i$.
+\end{IEEEproof}
+
+Proposition~\ref{prop:mean} says the control sits exactly between the two
+alternatives usually compared: \emph{in expectation} it is the uniform
+operator, yet \emph{in every realisation} it retains the weight heterogeneity
+of the original. It therefore holds (P1) fixed in distribution while removing
+(P2). A difference between $W(c)$ and $W(c\circ\pi)$ is attributable to the
+assignment and to nothing else.
+
+\subsection{When is the mechanism strong enough to matter?}
+\label{sec:leverage}
+
+A control is only informative if the mechanism it neutralises was doing
+something. We quantify this directly. Let
+$\bar{x}^{\,\mathrm{cent}}_i = \sum_{j} w_{ij} x_j$ and
+$\bar{x}^{\,\mathrm{unif}}_i = d_i^{-1}\sum_{j} x_j$, and define the
+per-node displacement $\Delta_i = \bar{x}^{\,\mathrm{cent}}_i -
+\bar{x}^{\,\mathrm{unif}}_i$.
+
+\begin{proposition}[Leverage bound]
+\label{prop:leverage}
+Let $s_i^2 = d_i^{-1}\sum_{j\in\mathcal{N}_i}\|x_j-\bar{x}^{\,\mathrm{unif}}_i\|^2$
+be the neighbourhood dispersion and define the \emph{structural leverage}
+%
+\begin{equation}
+\label{eq:leverage}
+\chi_i \;=\; \sqrt{d_i}\,\bigl\|w_i-u_i\bigr\|_2 \;\in\; \bigl[0,\;\sqrt{d_i-1}\,\bigr].
+\end{equation}
+%
+Then $\|\Delta_i\| \le \chi_i\, s_i$, with $\chi_i=0$ if and only if
+$w_i=u_i$ and $\chi_i=\sqrt{d_i-1}$ if and only if $w_i$ is a point mass.
+\end{proposition}
+
+\begin{IEEEproof}
+Since $\sum_{j\in\mathcal{N}_i}(w_{ij}-d_i^{-1})=0$, we may centre at
+$\bar{x}^{\,\mathrm{unif}}_i$ and write
+$\Delta_i=\sum_{j}(w_{ij}-d_i^{-1})\bigl(x_j-\bar{x}^{\,\mathrm{unif}}_i\bigr)$.
+The Cauchy--Schwarz inequality for vector-valued sums gives
+$\|\Delta_i\| \le \|w_i-u_i\|_2\bigl(\sum_j \|x_j-\bar{x}^{\,\mathrm{unif}}_i\|^2\bigr)^{1/2}
+= \|w_i-u_i\|_2\sqrt{d_i}\,s_i$. For the extremes, $\|w_i-u_i\|_2=0$ iff
+$w_i=u_i$, and over the simplex $\|w_i-u_i\|_2$ is maximised at a vertex,
+where $\|w_i-u_i\|_2^2 = 1-d_i^{-1}$.
+\end{IEEEproof}
+
+Equation~\eqref{eq:leverage} separates the displacement into a purely
+structural factor $\chi_i$, determined by how concentrated the weights are,
+and a purely populational factor $s_i$. Alongside every control comparison we
+report the normalised displacement
+%
+\begin{equation}
+\label{eq:relshift}
+\rho \;=\; \frac{1}{N}\sum_{i \in V} \frac{\|\Delta_i\|}{\sigma_{\mathrm{pop}}},
+\qquad
+\sigma_{\mathrm{pop}}^2 \;=\; \frac{1}{N}\sum_{i\in V}\bigl\|x_i-\bar{x}\bigr\|^2 ,
+\end{equation}
+%
+which measures the mechanism's effect on the update in units of the
+population's own spread. The interesting regime, and the one we in fact
+observe, is $\rho$ large with the control nevertheless indistinguishable: a
+mechanism that moves the search substantially while carrying no usable
+information.
+
+Two structural remarks follow from \eqref{eq:leverage} and bear on the
+implementation. First, $\chi_i$ is large precisely when a few neighbours
+dominate; because betweenness on sparse small-world graphs is exactly zero at
+many nodes, the guard $\varepsilon$ in \eqref{eq:W} assigns those neighbours
+weight $O(\varepsilon)$ and the operator behaves less like soft weighting than
+like hard masking. Second, $\chi_i$ vanishes identically on vertex-transitive
+graphs---the ring lattice being the degenerate case---so any such topology
+renders the mechanism inert by construction, independently of the landscape.
+
+\subsection{A positive control}
+\label{sec:positive}
+
+A null result invites the objection that the test cannot detect anything. The
+objection is answered by applying the same control to a score that is
+informative by construction.
+
+The optimizer under study weights neighbours by two scores, not one. Besides
+centrality it forms a second aggregate $\bar{x}^{\,\mathrm{inf}}$ using a
+fitness-influence score $\phi(v)$, monotone in rank, so that fitter neighbours
+carry more weight. That score \emph{is} search-relevant: it is a direct
+function of the objective values the run has already paid for. Permuting
+$\phi$ across nodes---identical machinery, identical value multiset, identical
+cost---should therefore cost performance.
+
+This gives a control pair with opposite predictions under the same test: a
+permutation that must hurt if the instrument works at all, and a permutation
+whose effect is the open question. Reporting both together separates ``the
+mechanism carries no information'' from ``our test detects nothing.''
+
+\subsection{Control 2: policy randomisation}
+\label{sec:rand}
+
+Adaptive components select among alternatives $\mathcal{A}=\{a_1,\dots,a_m\}$
+using feedback accumulated during the run: an operator, a neighbourhood size,
+a parameter value. Let $\Psi_t : \mathcal{H}_t \to \mathcal{A}$ be the
+selection rule, a function of the observed history $\mathcal{H}_t$. The claim
+attached to such a component is that $\Psi_t$ is \emph{informed}, i.e.\ that
+conditioning on $\mathcal{H}_t$ improves the choice.
+
+The policy control replaces $\Psi_t$ by $\Psi^{\mathrm{rand}}_t \sim
+\mathrm{Unif}(\mathcal{A})$, holding the alternatives, the switching schedule
+and the switching frequency fixed. It is the exact analogue of
+Proposition~\ref{prop:mean} at the level of policies: the marginal
+distribution over which alternatives are used is flattened, but the fact of
+alternating among them is preserved. An adaptive rule that does not beat
+$\Psi^{\mathrm{rand}}$ is not adapting, and whatever benefit the component
+confers belongs to variation per se rather than to selection.
+
+\subsection{Statistical protocol}
+\label{sec:stats}
+
+Because the claim under test is an equivalence, a non-significant hypothesis
+test is not by itself evidence: it is equally consistent with an
+underpowered study. We therefore also report two one-sided
+tests~\cite{schuirmann1987comparison,lakens2017equivalence}. We therefore report effect sizes with interval estimates
+as the primary quantity and treat tests as secondary.
+
+Runs are paired by seed, so a variant and its control receive the same initial
+population and the same random stream. For each function $f$ we report the
+median outcome, Cliff's $\delta_f$ with a bias-corrected percentile bootstrap
+interval over the $30$ paired runs, and a two-sided Wilcoxon signed-rank test,
+with Holm's step-down correction over the functions of a
+suite~\cite{holm1979simple}, following established practice for this
+setting~\cite{derrac2011practical,garcia2009study}.
+Cliff's $\delta$~\cite{cliff1993dominance} is used because outcomes span many
+orders of magnitude across a suite; we adopt the conventional threshold
+$|\delta|<0.147$ for a negligible effect~\cite{romano2006exploring}. When more
+than two variants are compared we apply a Friedman test per function and
+report mean ranks across the suite. Reporting $\delta_f$ with intervals lets a
+reader verify that the intervals exclude effects large enough to matter, which
+is the substantive question, rather than merely failing to exclude zero.

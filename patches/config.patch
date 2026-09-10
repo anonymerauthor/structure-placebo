@@ -1,0 +1,12 @@
+--- a/social/config.py
++++ b/social/config.py
+@@ -187,6 +187,9 @@
+     
+     # Boundary handling
+     BOUNDARY_MODE: str = "reflect"  # clip, reflect
++
++    # Use sparse-matrix vectorized diffusion (equivalent to scalar path up to FP round-off)
++    VECTORIZED: bool = False
+     
+     # Hybrid exploitation (SOCIAL++)
+     SOCIALPP_MODE: bool = False  # Enable DE/current-to-best exploitation

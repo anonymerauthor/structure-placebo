@@ -1,0 +1,86 @@
+\section{Threats to Validity}
+\label{sec:threats}
+
+\subsection{Scope of the conclusion}
+
+We audit one published centrality-weighted optimizer and one adaptive scheme of
+our own. The controls are defined for the general form \eqref{eq:master}, and
+Proposition~\ref{prop:mean} holds for any score-proportional weighting, but the
+empirical finding is about these two mechanisms. Whether other structural
+statistics---closeness, eigenvector centrality, PageRank---or other graph
+families behave the same way is untested here. We regard this as the principal
+limitation: the instrument is general, the evidence is not yet.
+
+Two considerations bear on how far the result plausibly extends. The argument
+of Section~\ref{sec:discussion} turns on the graph being fixed before the
+first evaluation and unrelated to the objective, which is true of every
+Watts--Strogatz-based method we are aware of. And two independently designed
+mechanisms failed their controls in the same way. Neither is evidence about
+methods we did not run.
+
+\subsection{Statistical power}
+
+The primary contrast is run at the $51$ repetitions the CEC2017 protocol
+prescribes; the remaining arms and the $D=10$ suite are run at $30$, which we
+note as a limitation rather than a convention.
+
+Per-function equivalence is nonetheless not established at the negligibility
+margin, and additional runs would not fully establish it. At $51$ runs the
+median $90\%$ half-width is $0.139$, below the $0.147$ margin, yet only $6$ of
+$28$ functions are formally equivalent, because the criterion is
+$|\hat{\delta}|+\text{half-width}<m$ rather than $\text{half-width}<m$. On the
+median function, reaching the negligibility margin would require roughly $100$
+runs; on $4$ of $28$ the point estimate itself exceeds $0.147$, so no sample
+size would place them inside that band. Our equivalence claim is therefore made
+at suite level, where the interval $[-0.038,+0.020]$ is contained in
+$|\delta|<0.05$, and per function we claim only that effects lie within a small
+margin ($26$ of $28$ at $|\delta|<0.33$) and that none survives correction as a
+difference.
+
+This is a real limit on the strength of the negative result, and we prefer to
+state it than to rest on the difference tests alone. What the data exclude is a
+systematic effect of the assignment across a suite; what they do not exclude is
+a small effect on particular functions.
+
+\subsection{Construct validity of the controls}
+
+The permutation control assumes the score multiset is the quantity to hold
+fixed. If a method's benefit came from the \emph{joint} distribution of scores
+and degrees---high-degree nodes systematically receiving high scores---then
+permutation would break that too, and attribute to assignment something that
+belongs to a degree--score coupling. We regard this as a distinction without a
+practical difference here, since such a coupling is exactly the kind of
+structural information the claim asserts; but a reader who separates them
+should read our result as covering both.
+
+The policy control randomises selection while preserving the switching
+schedule. It therefore tests whether selection is informed, not whether the
+epoch length or the arm set are well chosen. A method whose benefit lay
+entirely in its schedule would pass our control while making a weaker claim
+than its authors intend.
+
+\subsection{Implementation and benchmark choices}
+
+All arms share one implementation, which removes a large source of variance but
+means an implementation-level defect would affect every arm. We verified the
+vectorized update against the reference path to $8.9\times10^{-16}$ per step
+and to identical run distributions before using it. Population size is fixed at
+$N=60$ throughout; the density sweep varies degree but not $N$, so interactions
+between the two are unmeasured.
+
+Two CEC2017 functions are absent, $F_{2}$ by the organisers' advice and
+$F_{30}$ because the reference implementation we use omits it. The protocol's
+fourth dimension, $D=100$, is not run; at several times the cost of $D=50$ it
+was beyond the single machine available, and we note it as unfinished rather
+than unnecessary. The primary contrast is run at all three dimensions we do
+report; the density and adaptive arms are run at $D\in\{10,30\}$, since the
+$7{,}350$-run sweep already covers density at $D\in\{10,30,50\}$.
+
+\subsection{Reproducibility}
+
+Every run is stored individually, keyed by arm, function, dimension and seed,
+and every figure and table is produced by a script from those files. Seeds are
+shared across arms so all comparisons are paired. Runs were executed on one
+machine with a fixed software environment; we report the parallel throughput
+measurements that determined the scheduling, since they affect wall-clock
+figures but not results.

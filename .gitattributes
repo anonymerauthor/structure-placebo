@@ -1,0 +1,12 @@
+# Patches must stay LF or `git apply` fails on checkout under core.autocrlf.
+*.patch  text eol=lf -diff
+
+*.py     text eol=lf
+*.tex    text eol=lf
+*.bib    text eol=lf
+*.md     text eol=lf
+*.cff    text eol=lf
+*.txt    text eol=lf
+
+*.pdf    binary
+*.csv    text

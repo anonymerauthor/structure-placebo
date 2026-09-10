@@ -1,0 +1,59 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+Structure-aware metaheuristics are justified by a causal claim---that a
+structural quantity computed on the population graph carries information about
+where to search---which the usual evidence, an ablation, cannot establish. An
+ablation deletes the component and so changes the optimizer's mixing operator
+along with the information it carries; the resulting difference is consistent
+with the weights having been merely unequal.
+
+We defined two controls that keep the mechanism running at full strength and
+destroy only the information it is claimed to use, and characterised them.
+Permuting a structural score across nodes yields an operator that equals
+uniform mixing in expectation while retaining the original's weight
+heterogeneity in every realisation (Proposition~\ref{prop:mean}), which is
+exactly the separation an ablation fails to make. A leverage bound
+(Proposition~\ref{prop:leverage}) states when such a comparison is informative
+at all, factoring the displacement a weighting induces into a structural and a
+populational term, and identifying the topologies on which the mechanism is
+inert by construction.
+
+Applied to a published betweenness-weighted small-world optimizer, the controls
+give a clear answer. The mechanism is active, displacing each update by a
+quarter to a third of the population's spread. Its assignment of scores to
+graph positions is not: across $104$ function comparisons on two suites, three
+dimensions and five budgets, permutation changes nothing that survives
+correction, and at suite level the effect is statistically equivalent to zero
+within a margin four times stricter than the negligibility threshold.
+Separating the two properties an ablation confounds shows why: unequal weights
+help slightly, on $3$ of $28$ functions, while which neighbour receives the
+large weight matters on none.
+
+A null result of this kind is only as good as the test's ability to return a
+non-null one, so we calibrated the instrument on two further mechanisms of the
+same optimizer, unchanged in suite, sample size and statistic. On the
+fitness-influence weighting it returns an intermediate, class-dependent effect,
+reaching $\delta=-0.80$ on a single composition function; on adaptive density
+selection it returns a clear one, $\bar{\delta}=-0.101$ at
+$p=1.5\times10^{-5}$. The ordering null--intermediate--clear is what a working
+instrument should produce, and it forecloses the reading that our centrality
+result reflects a test without power.
+
+What carries information in this algorithm, then, is not the scores computed on
+the graph but the graph's coarse density: consequential in $30$ of $49$
+configurations, with large effects where present, and with an optimum that is
+problem- and dimension-dependent and resists prediction from a landscape
+ruggedness descriptor. We built an adaptive scheme on that basis and subjected
+it to the second control, which it passes.
+
+The instrument costs one arm and no additional budget. We would encourage its
+use wherever a structural or adaptive claim is made, with two conditions that
+our own analysis makes concrete: report the displacement, so that a control on
+an inert mechanism is not mistaken for evidence; and test equivalence
+explicitly with adequate power, rather than resting on a non-significant
+difference. The most direct extension is to widen the audit---the same controls
+apply unchanged to any score-proportional weighting---and, on the constructive
+side, to ask whether a graph derived from the landscape rather than fixed in
+advance would make a structural statistic informative. The prediction, which
+these controls can test, is that on such a graph permutation would hurt.

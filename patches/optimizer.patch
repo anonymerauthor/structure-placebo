@@ -1,0 +1,97 @@
+--- a/social/optimizer.py
++++ b/social/optimizer.py
+@@ -6,6 +6,7 @@
+ from typing import Dict, Optional, Tuple, List, Callable
+ from .config import Config
+ from .budget import BudgetedObjective
++from .fast_ops import build_mixing_matrices, repair_boundary_vec
+ from .graph_ops import (
+     create_watts_strogatz_graph,
+     compute_centrality,
+@@ -40,6 +41,9 @@
+             't_total': []
+         }
+         
++        # Adjacency structure cache for the vectorized path
++        self._adj_cache = None
++        
+         # Centrality cache
+         self._centrality_cache = {}
+         self._last_centrality_iter = -1
+@@ -287,8 +291,40 @@
+         # Update positions (SOCIAL paper Eq. 13-16, improved)
+         t_update_start = time.perf_counter()
+         new_positions = {}
+-        
+-        for node in G.nodes:
++
++        if getattr(self.config, 'VECTORIZED', False):
++            # Sparse-matrix form of the loop below: the neighbour aggregation is a
++            # row-stochastic mixing operator, so the whole population updates at once.
++            Wc, Wi, isolated, self._adj_cache = build_mixing_matrices(
++                G, node_list, centrality, influence, self.config.NEIGHBOR_MODE,
++                cache=self._adj_cache
++            )
++            X = positions
++            X_cent = Wc @ X
++            X_inf = Wi @ X
++
++            self_weight = 1.0 - (alpha_t + beta_t + gamma_t + delta_t)
++            target = (self_weight * X +
++                      alpha_t * X_cent +
++                      beta_t * X_inf +
++                      gamma_t * gbest_pos[None, :] +
++                      delta_t * elite_pos[None, :])
++            X_new = (1 - eta_t) * X + eta_t * target
++
++            if self.config.ENABLE_SYNC and iteration % self.config.SYNC_INTERVAL == 0:
++                sync_weight = self.config.SYNC_WEIGHT_INIT * (1 - t)
++                X_new = (1 - sync_weight) * X_new + sync_weight * dimension_mean[None, :]
++
++            X_new = repair_boundary_vec(X_new, bounds, self.config.BOUNDARY_MODE)
++            # Isolated nodes keep their position untouched (no sync, no repair)
++            if isolated.any():
++                X_new[isolated] = X[isolated]
++
++            for i, node in enumerate(node_list):
++                new_positions[node] = X_new[i].copy()
++
++        # Scalar reference path; skipped when the vectorized branch already ran.
++        for node in (() if new_positions else G.nodes):
+             neighbors = list(G.neighbors(node))
+             if not neighbors:
+                 new_positions[node] = G.nodes[node]['position'].copy()
+@@ -479,6 +515,15 @@
+         
+         return G
+     
++    def adapt_topology(self, G: nx.Graph, iteration: int, max_iterations: int,
++                       gbest_fitness: float) -> nx.Graph:
++        """Hook called once per iteration before evaluation.
++
++        The base optimizer keeps its topology fixed and returns G unchanged.
++        Subclasses may rewire or resize the neighbourhood here.
++        """
++        return G
++
+     def optimize(self, obj_func: BudgetedObjective, bounds: List[float],
+                  dim: int, seed: Optional[int] = None) -> Dict:
+         """
+@@ -499,6 +544,7 @@
+         
+         # Reset SOCIAL++ tracking
+         self._de_accepted_count = []
++        self._adj_cache = None
+         
+         # Initialize
+         G = self.initialize_population(dim, bounds, seed=seed)
+@@ -529,6 +575,9 @@
+         progress_eval_interval = max(1, int(0.05 * obj_func.max_evals))  # 5% of budget
+         
+         while not obj_func.exhausted() and iteration < max_iterations:
++            # Topology-adaptation hook; a no-op unless a subclass overrides it.
++            G = self.adapt_topology(G, iteration, max_iterations, gbest_fitness)
++
+             # Evaluate population
+             self.evaluate_population(G, obj_func)
+             

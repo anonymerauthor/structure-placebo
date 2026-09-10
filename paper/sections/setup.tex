@@ -1,0 +1,118 @@
+\section{Experimental Setup}
+\label{sec:setup}
+
+\subsection{Arms}
+\label{sec:arms}
+
+All six arms share one implementation, one schedule, one budget and one seed
+list; they differ only in how the mixing operator of \eqref{eq:master} is
+constructed. Table~\ref{tab:arms} states the differences exactly.
+
+\begin{table}[t]
+\caption{The six arms. All other components---schedule, elite memory,
+mutation, boundary handling, budget, seeds---are identical. Degree is fixed
+except in the last two arms, which redraw it every $12$ iterations.}
+\label{tab:arms}
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Arm & Degree & Weights & Role \\
+\midrule
+\textsc{Social}     & $5$      & betweenness & published \\
+\permcontrol{}      & $5$      & permuted    & control 1 \\
+\textsc{Unif}$_4$   & $5$      & uniform     & ablation \\
+\textsc{Fix}$_{16}$ & $16$     & uniform     & fixed density \\
+\polcontrol{}       & random   & uniform     & control 2 \\
+\textsc{Ads}        & UCB      & uniform     & adaptive \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\permcontrol{} draws a fresh permutation whenever the graph changes.
+\polcontrol{} and \textsc{Ads} both re-draw the neighbourhood degree from
+$\{4,8,16,32,N{-}1\}$ every $12$ iterations and rebuild the graph at that
+degree, carrying positions and fitness over; they differ only in whether the
+choice uses the observed improvement (\textsc{Ads}, sliding-window UCB with
+window $40$ and $c=0.35$) or ignores it (\polcontrol{}, uniform draw). Both
+use uniform mixing, since Section~\ref{sec:results} shows the centrality
+weighting to be uninformative; dropping it also removes the betweenness
+computation, about $30\%$ of per-iteration runtime.
+
+\subsection{Benchmarks and protocol}
+\label{sec:benchmarks}
+
+\emph{Classic suite.} The $23$ functions of Yao \emph{et
+al.}~\cite{yao1999evolutionary}, used because they are the suite on which the
+method under test was originally reported. We run them at two budgets,
+$2\times10^{4}$ and $1.05\times10^{5}$ evaluations, the latter matching the
+original report.
+
+\emph{CEC2017.} The competition suite~\cite{awad2016cec2017} with the
+prescribed protocol: search domain $[-100,100]^{D}$, budget $10^{4}D$
+evaluations, and error $f(\mathbf{x})-f^{*}$ as the reported outcome. We use
+$D\in\{10,30,50\}$. Two functions are absent: $F_{2}$, which the organisers
+advise against for unstable behaviour in higher dimensions, and $F_{30}$,
+which the reference implementation we use does not provide---leaving $28$
+functions.
+
+Population size is $N=60$ throughout. Seeds are $0,1,\dots$ shared across
+arms, so every comparison is paired: an arm and its control start from the
+same population and consume the same random stream.
+
+\subsection{Corrections to the reference implementation}
+\label{sec:corrections}
+
+Three defects in the published implementation affect measurement and are
+corrected here; we report them because they bear on the comparability of our
+numbers with the original.
+
+First, the fixed-dimension functions $F_{14}$--$F_{23}$ are evaluated at
+$D=30$ although their implementations slice the first two to six coordinates,
+leaving up to $28$ dimensions inert. We run each at its native dimension.
+Second, neighbourhood size is set per function category, which is per-instance
+tuning; we hold $N$ and the schedule fixed across functions. Third, the
+rewiring routine catches only \texttt{NetworkXError} while
+\texttt{double\_edge\_swap} raises \texttt{NetworkXAlgorithmError}, which is
+not a subclass, so dense graphs crash the optimizer; we widen the handler.
+
+\subsection{Implementation and equivalence to the reference}
+\label{sec:impl}
+
+The per-node update loop is the dominant cost of the reference implementation.
+We replaced it by the sparse-matrix form of \eqref{eq:master}, caching the
+adjacency pattern and rebuilding it only when the graph is rewired. Since
+edge swaps preserve both edge count and degree sequence, neither is a valid
+cache key; we invalidate on an explicit rewiring counter.
+
+We verified equivalence before using the fast path for any reported result.
+A single diffusion step matches the reference to $8.9\times10^{-16}$ across
+eight configurations (both weighting modes, both boundary-repair modes, with
+and without the synchronisation step); vectorized boundary repair matches
+exactly; and over $15$ complete runs the two paths produce identical
+distributions of final fitness. The speedup is $2.6\times$, bounded above by
+about $3.4\times$ because the update loop is roughly $71\%$ of runtime.
+
+\subsection{Hardware, cost, and scheduling}
+\label{sec:hardware}
+
+All runs execute on one machine: an Intel Core i7-12700H, $14$ cores
+($6$ performance, $8$ efficiency), $32$~GB. We measured parallel throughput
+before scheduling: it saturates at about $7\times$ around $16$ workers, and
+$20$ workers are slower than $16$ ($6.9\times$ against $7.1\times$) while
+per-task latency nearly triples. Long batches therefore run on six worker
+processes, which delivers roughly $80\%$ of peak throughput with no
+degradation in per-run latency.
+
+Parallelism uses independent sharded processes rather than a worker pool: on
+this machine the pool backend fails intermittently during process spawn with
+a Windows handle-duplication error. Each run checkpoints to its own file
+keyed by (arm, function, dimension, seed), so sharding is equivalent to
+pooling, interrupted batches resume without repeating work, and any reported
+number is traceable to the run that produced it.
+
+Cost varies by more than twentyfold across CEC2017: from $12$~s per run on the
+unimodal functions to $213$~s on $F_{25}$, with composition functions
+averaging $81$~s at $D=30$. Estimates in this paper are therefore weighted by
+the suite's actual composition rather than extrapolated from a measured rate.

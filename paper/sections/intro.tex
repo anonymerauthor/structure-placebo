@@ -1,0 +1,123 @@
+\section{Introduction}
+\label{sec:intro}
+
+A large and growing class of population-based optimizers is justified
+structurally. Candidate solutions are placed on a graph, a statistic of that
+graph---centrality, degree, bridge potential---is computed, and the update is
+weighted so that agents learn preferentially from neighbours the statistic
+distinguishes. The accompanying argument is causal: the method performs well
+\emph{because} the structure identifies informative agents. Where such
+mechanisms are evaluated at all, it is by deletion---the term is removed and
+performance is compared.
+
+Deletion cannot establish the claim. Removing a weighting changes the
+optimizer's mixing operator, its effective neighbourhood, its convergence rate
+and often its cost, so a difference in outcome is consistent with the weights
+having been merely unequal. The claim actually being advanced is narrower and
+sharper: that the \emph{assignment} of scores to graph positions, and thereby
+to the solutions those positions hold, is informative. Testing it requires
+holding the mechanism at full strength while destroying only that
+correspondence.
+
+This paper supplies such a test, characterises it mathematically, and applies
+it at scale. The instrument is a pair of controls. The first permutes the
+structural scores across nodes: the score multiset, the weight heterogeneity
+and the arithmetic cost are preserved exactly, while the pairing of score to
+position is destroyed. We show (Proposition~\ref{prop:mean}) that this control
+has the uniform operator as its expectation while retaining the original's
+weight dispersion in every realisation---so it interpolates precisely between
+the two alternatives an ablation confounds. The second control applies the same
+logic to adaptive components, replacing an informed selection rule by a uniform
+draw over the same alternatives on the same schedule, thereby separating
+\emph{selecting} a component from merely \emph{varying} it.
+
+A control is informative only if the mechanism it neutralises was doing
+something, and we make that precondition quantitative. Proposition~\ref{prop:leverage}
+bounds the displacement a structural weighting induces by the product of a
+structural leverage term, measuring how concentrated the weights are, and a
+populational dispersion term. Reporting this displacement alongside every
+comparison distinguishes the uninteresting case of an inert mechanism from the
+finding we in fact report: a mechanism that moves the search substantially and
+whose control reproduces it exactly.
+
+Applied to a recently published centrality-weighted small-world
+optimizer~\cite{jalali2026social}, the permutation control is indistinguishable
+from the published method on every function of three suites, at three budgets,
+under Holm-corrected paired tests with effect-size intervals---while the same
+mechanism displaces each update by roughly a quarter to a third of the
+population's own spread. The structure is doing measurable work of no
+informational value.
+
+A null result is worth only as much as the test's ability to return a non-null
+one, so we calibrate. The same controls, unchanged, are applied to two further
+mechanisms of the same optimizer: the fitness-influence weighting, whose score
+is informative by construction, and an adaptive density scheme of our own. The
+first yields an intermediate, problem-class-dependent effect reaching
+$\delta=-0.80$ on one function; the second a clear one, $\bar{\delta}=-0.101$
+at $p=1.5\times10^{-5}$ over $24$ of $28$ functions. Null, intermediate, clear,
+on one suite with one statistic: the instrument discriminates, so the null on
+centrality is a property of that mechanism and not of the test.
+
+Turning the instrument on our own proposal also corrected our own reading of
+it. Judged by per-function corrected tests alone the adaptive scheme looks
+weak, winning on $3$ of $28$; judged at suite level it is unambiguous. We
+report both, and note the asymmetry we would otherwise have introduced by
+applying a stringent test to a published method and a lenient one to ourselves.
+
+\subsection*{Contributions}
+
+\begin{enumerate}
+\item \textbf{Two controls for structural attribution}, defined for the general
+  mixing-operator form \eqref{eq:master} that subsumes cellular evolutionary
+  algorithms, neighbourhood-topology swarms, localized consensus dynamics and
+  centrality-weighted methods. They are drop-in, budget-neutral, and require no
+  modification to the optimizer under test.
+
+\item \textbf{Invariance results that make the controls sound.}
+  Proposition~\ref{prop:mean} establishes that the permutation control equals
+  the uniform operator in expectation while preserving weight heterogeneity
+  pathwise, isolating assignment from heterogeneity---the confound that renders
+  ablation inconclusive.
+
+\item \textbf{A leverage bound} (Proposition~\ref{prop:leverage}) separating the
+  displacement a structural weighting induces into a structural and a
+  populational factor, giving a necessary condition for a control comparison to
+  be informative and identifying the degenerate topologies on which such
+  mechanisms are inert by construction.
+
+\item \textbf{A large-scale negative result.} Across the classic
+  $F_{1\text{--}23}$ suite at two budgets and CEC2017 at $D\in\{10,30,50\}$,
+  totalling more than $2\times10^{4}$ runs, betweenness-weighted learning is
+  statistically indistinguishable from its permutation control on every
+  function tested, with effect-size intervals excluding non-negligible effects.
+
+\item \textbf{Identification of what does survive.} A $7{,}350$-run density
+  sweep shows neighbourhood size to be consequential in $30$ of $49$ problem
+  configurations, with the optimum both problem- and dimension-dependent and
+  only weakly predictable from landscape ruggedness---evidence that density
+  must be adapted rather than fixed by a topology prior, and simultaneously
+  evidence against predicting it in advance.
+
+\item \textbf{Calibration of the instrument.} The same controls, unchanged in
+  suite, sample size and statistic, are applied to two further mechanisms of
+  the same optimizer and return an intermediate effect on one and a clear
+  effect ($\bar{\delta}=-0.101$, $p=1.5\times10^{-5}$) on the other. The null
+  on the centrality assignment therefore cannot be attributed to a test without
+  power.
+
+\item \textbf{Self-application.} The adaptive density scheme we propose is
+  subjected to the second control on the same terms; we report that it passes,
+  and also that our own first reading of it---based on per-function corrected
+  tests alone---understated the effect.
+\end{enumerate}
+
+\subsection*{What this paper does not claim}
+
+We do not claim that the optimizer studied performs poorly, that structural
+information is useless in principle, or that no centrality-weighted method can
+work. The claim is narrower and, we believe, more useful: for the mechanisms
+tested here, the evidence offered for structural attribution does not survive a
+control that leaves the mechanism running. Whether other structural statistics,
+other graphs, or landscape-derived topologies fare differently is an open
+question that the same instrument can settle, and
+Section~\ref{sec:discussion} sketches how.

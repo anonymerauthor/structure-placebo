@@ -1,0 +1,143 @@
+\section{Related Work}
+\label{sec:related}
+
+We organise the literature around a single question: when a population method
+attributes its performance to structure, what evidence is offered, and what
+would settle the matter? Section~\ref{sec:rel:topology} covers methods in
+which topology is a design choice, \ref{sec:rel:measure} those in which it is
+a measured object, \ref{sec:rel:theory} the theory that describes what such
+updates do, \ref{sec:rel:adaptive} adaptive components and their credit
+assignment, and \ref{sec:rel:method} the methodological literature on
+attribution.
+
+\subsection{Topology as a design choice}
+\label{sec:rel:topology}
+
+That the interaction graph shapes a population's behaviour is among the
+better-established empirical facts in the field. Kennedy and Mendes varied the
+particle swarm's communication topology across a large set of graphs and found
+performance to depend on it systematically, with denser neighbourhoods
+favouring rapid convergence and sparser ones preserving
+diversity~\cite{kennedy2002population}; the fully informed variant~\cite{mendes2004fully}
+and comprehensive learning~\cite{liang2006clpso} pursue the same insight through
+the update rule, and decentralised differential evolution through the
+population graph~\cite{dorronsoro2011cellular}. Cellular evolutionary algorithms make
+the mechanism explicit: Alba and Dorronsoro parameterise the relationship
+between neighbourhood and grid by a single ratio, show that this ratio governs
+selection pressure, and schedule it during the run to move between exploration
+and exploitation~\cite{alba2005exploration}. Takeover-time analysis supplies
+the accompanying theory, predicting the rate at which the population collapses
+onto an incumbent as a function of neighbourhood shape.
+
+This line establishes (P1) in the terminology of
+Section~\ref{sec:claim}---heterogeneity and connectivity matter---but it makes
+no claim of the form (P2). The grid is fixed a~priori and no node is asserted
+to be more informative than another by virtue of its position.
+
+A more recent family does make such a claim. Here a structural statistic
+computed on the population graph weights the update directly, so that agents
+learn preferentially from neighbours that occupy distinguished positions. The
+graphs are typically Watts--Strogatz small worlds~\cite{watts1998collective}
+and the statistic typically betweenness, computable in $O(N\!\cdot\!M)$ by
+Brandes' algorithm~\cite{brandes2001faster}. The
+optimizer we adopt as our primary case study places candidate solutions on a
+small-world graph and weights influence by betweenness centrality, arguing
+that high-betweenness agents bridge regions of the search
+space~\cite{jalali2026social}. Related proposals substitute degree,
+closeness, eigenvector centrality or PageRank. Our concern throughout is not
+whether these methods perform competitively---several do---but whether the
+structural statistic is the reason.
+
+\subsection{Topology as a measured object}
+\label{sec:rel:measure}
+
+A parallel line treats the interaction pattern as something to be observed
+rather than designed. Oliveira, Bastos-Filho and Menezes reconstruct
+\emph{influence graphs} from the information exchanges that actually occur
+during a run and characterise swarms through network-science statistics,
+including Laplacian spectra and component structure, using them to diagnose
+stagnation and to compare
+optimizers~\cite{oliveira2015network,oliveira2020uncovering}. Local optima
+networks~\cite{ochoa2008lon} apply the same instinct to the landscape,
+representing basins as nodes and search transitions as edges; as their authors
+stress, the objective is characterisation, and the graph is built after the
+fact rather than used to drive search.
+
+The distinction matters for our purposes. Measurement studies establish that
+graph statistics \emph{correlate} with search behaviour. They do not establish
+that feeding such a statistic back into the update is beneficial, which is a
+causal claim of a different order and the one we test.
+
+\subsection{Theory of consensus-type updates}
+\label{sec:rel:theory}
+
+Consensus-based optimization (CBO) provides the most developed theory for
+updates of the form \eqref{eq:master}. Particles drift toward a weighted
+consensus point under multiplicative noise; convergence to global minimisers
+has been established in the mean-field limit under conditions considerably
+weaker than convexity~\cite{pinnau2017consensus,carrillo2018analytical}, and
+subsequently for the finite-particle
+scheme~\cite{fornasier2024cbo}. Polarized CBO localises the consensus through
+a kernel, so that each particle is drawn toward a weighted mean emphasising
+nearby particles~\cite{bungert2024polarized}; algebraically this is a
+neighbourhood aggregate with a state-dependent, rather than graph-dependent,
+weighting.
+
+This body of work characterises what such operators \emph{do}: it identifies
+the drift, quantifies the contraction of the empirical measure, and relates
+the consensus rate to the operator's spectrum. It is, however, silent on the
+question we pose. CBO theory takes the weighting as given and asks whether the
+resulting dynamics converge; it does not ask whether one weighting is more
+informative than another with the same distribution. Proposition~\ref{prop:mean}
+is precisely a statement of that second kind, and to our knowledge has no
+counterpart in this literature.
+
+\subsection{Adaptive components and credit assignment}
+\label{sec:rel:adaptive}
+
+Choosing algorithm components online is a mature subfield. Adaptive operator
+selection formulates the choice as a multi-armed bandit, assigning credit from
+observed improvement and balancing exploration against exploitation with
+rules ranging from probability matching and adaptive pursuit to
+UCB variants~\cite{fialho2010analyzing}. Parameter control more broadly, and
+hyper-heuristics, rest on the same premise: that feedback from the run
+identifies the better alternative.
+
+Outside metaheuristics, choosing a graph to optimise a spectral property is
+routine---Ghosh and Boyd grow graphs to maximise algebraic
+connectivity~\cite{ghosh2006growing}, and connectivity maintenance through the
+Fiedler value is standard in multi-robot coordination. These methods optimise
+a stated objective and their success is verifiable against it, which is not
+the situation for an adaptive component inside a stochastic optimizer, where
+the claim that selection is informed is seldom separated from the effect of
+switching at all. Our second control (Section~\ref{sec:rand}) targets exactly
+this gap, and we apply it to an adaptive scheme of our own construction as
+well as to published ones.
+
+\subsection{Methodological critique and ablation practice}
+\label{sec:rel:method}
+
+S\"orensen's critique of metaphor-driven algorithm design~\cite{sorensen2015metaheuristics}
+prompted sustained attention to what novelty in this field consists of, and
+subsequent programmatic work has pressed for component-level analysis in place
+of monolithic algorithm proposals~\cite{swan2022metaheuristics}. Component-wise
+ablation is now common in strong venues, and benchmark protocols such as
+CEC2017~\cite{awad2016cec2017} have standardised the outcome measurements,
+alongside guidance on statistical practice~\cite{derrac2011practical,garcia2009study},
+sample sizing~\cite{campelo2019sample} and benchmarking more
+broadly~\cite{bartz2020benchmarking}.
+
+Ablation nonetheless answers a question adjacent to the one authors typically
+ask. Deleting a component yields a different algorithm, with a different
+operator spectrum and often a different runtime; the comparison therefore
+confounds (P1) with (P2). Controls of the second kind---mechanism intact at
+full strength, only the information it consumes destroyed---are standard
+practice in fields that must separate an intervention from its delivery, and
+permutation-based null models are long established for testing whether an
+observed structure carries signal, from degree-preserving rewiring in network
+biology~\cite{maslov2002specificity} to null models in community
+ecology~\cite{gotelli2000null}. Comparable reality checks have recently
+reshaped reported progress in neighbouring fields~\cite{musgrave2020metric,lipton2019troubling}. We are not
+aware of their systematic use to audit structural attribution in
+metaheuristics, and it is this transfer, together with the invariance
+properties that make the transfer sound, that we contribute.
