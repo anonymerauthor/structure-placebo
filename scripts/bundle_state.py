@@ -36,6 +36,11 @@ def pack(out: str, extra: list[str]) -> None:
             n = len(os.listdir(path))
             tar.add(path, arcname=os.path.join("outputs", lbl))
             print(f"  packed {lbl:10s} {n:6d} records")
+        # Working notes are not in git; they belong with the state.
+        notes = os.path.join(HERE, "HANDOFF.md")
+        if os.path.isfile(notes):
+            tar.add(notes, arcname="HANDOFF.md")
+            print("  packed HANDOFF.md")
     print(f"-> {out}  ({os.path.getsize(out)/1e6:.1f} MB)")
 
 
