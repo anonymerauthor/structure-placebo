@@ -92,9 +92,19 @@ whether a null result reflects the method or our version of it. The
 implementation is published without a licence, so it is not redistributed
 here — fetch it and apply the patches:
 
-```bash
-pip install -r requirements.txt
+Work in a virtual environment; the pinned versions matter for reproducing the
+numbers and should not be mixed into a system interpreter.
 
+```bash
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Then fetch the audited implementation and apply the patches:
+
+```bash
 git clone https://github.com/MehrdadJalali-AI/SOCIAL-OPTIMIZATION upstream
 cd upstream
 git apply ../patches/optimizer.patch ../patches/graph_ops.patch ../patches/config.patch
@@ -150,6 +160,8 @@ On the machine that will run the experiments:
 ```bash
 git clone https://github.com/anonymerauthor/structure-placebo
 cd structure-placebo
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python scripts/bundle_state.py --restore ../state.tar.gz
 ```
