@@ -134,6 +134,39 @@ Parallelism comes from independent sharded processes rather than a worker pool;
 intermittently during process spawn, and sharding is equivalent because every
 run checkpoints separately.
 
+### Running on another machine
+
+Only the per-run records need moving; the code and consolidated CSVs are in
+git. They are one small JSON per run and compress to well under a megabyte.
+
+On the machine that holds the current state:
+
+```bash
+python scripts/bundle_state.py --out state.tar.gz
+```
+
+On the machine that will run the experiments:
+
+```bash
+git clone https://github.com/anonymerauthor/structure-placebo
+cd structure-placebo
+pip install -r requirements.txt
+python scripts/bundle_state.py --restore ../state.tar.gz
+```
+
+Then start any study; finished runs are skipped, so the work resumes rather
+than repeats.
+
+To follow progress from elsewhere, have the runner publish it:
+
+```bash
+python scripts/status.py --watch 900     # every 15 minutes
+```
+
+This force-updates an orphan `status` branch holding a single `STATUS.md`,
+which can be read on the web from anywhere. It needs no SSH, no port
+forwarding and no shared filesystem, and `main` keeps a clean history.
+
 ### Regenerating figures and tables
 
 ```bash
