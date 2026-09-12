@@ -11,31 +11,16 @@ __pycache__/
 venv/
 .DS_Store
 
-# LaTeX build products
-paper/*.aux
-paper/*.bbl
-paper/*.blg
-paper/*.fdb_latexmk
-paper/*.fls
-paper/*.log
-paper/*.out
-paper/*.synctex.gz
-paper/main.pdf
+# The manuscript and everything that builds it stay local: the work is
+# under submission and this repository is the public artefact only for
+# the code and the measurements.
+paper/
+submission/
 
 # Working-state handoff; travels in the state bundle, not in git.
 HANDOFF.md
 STATUS.md
 state*.tar.gz
-# Built submission PDFs; regenerate from paper/ sources.
-submission/
-paper/*.pdf
-!paper/figures/*.pdf
-paper/*.buildlog
-# Submission materials carrying author identity. The manuscript is
-# double-blind and points reviewers at this repository, so these stay local.
-paper/coverletter.tex
-paper/titlepage.tex
-submission/
 
 # Publisher boilerplate dropped in locally; not ours to redistribute, and the
 # sample cover letter in it carries author information.

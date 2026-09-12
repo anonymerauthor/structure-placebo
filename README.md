@@ -27,7 +27,7 @@ random permutation `π`. The multiset of scores, the weight heterogeneity and
 the arithmetic cost are preserved exactly; only the correspondence between a
 node's position and the weight its neighbours give it is destroyed.
 
-The control is sound because of a small result proved in the paper: under a
+The control is sound because of a small result: under a
 uniform permutation the resulting operator equals uniform mixing *in
 expectation* while retaining the original's weight heterogeneity in *every
 realisation*. It therefore sits exactly between the two alternatives an
@@ -81,7 +81,6 @@ experiments/    one module per study; each writes per-run JSON records
 scripts/        bootstrap, sharded runner, pipeline driver, equivalence tests
 patches/        the complete set of changes made to the audited implementation
 data/           consolidated per-run results as CSV
-paper/          manuscript sources, figure and table generators
 ```
 
 ## Reproducing
@@ -130,7 +129,7 @@ for n in ('optimizer','graph_ops','config'):
 
 Then run any study. Each writes one JSON file per run, keyed by
 `(variant, function, dimension, seed)`, and skips work already on disk, so runs
-are resumable and any number in the paper is traceable to the run that produced
+are resumable and every reported number is traceable to the run that produced
 it.
 
 ```bash
@@ -178,14 +177,6 @@ python scripts/status.py --watch 900     # every 15 minutes
 This force-updates an orphan `status` branch holding a single `STATUS.md`,
 which can be read on the web from anywhere. It needs no SSH, no port
 forwarding and no shared filesystem, and `main` keeps a clean history.
-
-### Regenerating figures and tables
-
-```bash
-python paper/make_figures.py     # reads data/, writes paper/figures/*.pdf
-python paper/make_tables.py      # writes paper/tables/*.tex
-cd paper && latexmk -pdf main.tex
-```
 
 ## Protocol
 
