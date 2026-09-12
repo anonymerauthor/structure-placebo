@@ -21,21 +21,22 @@
 
 \begin{document}
 
-\title{Does the Structure Do the Work? Placebo Controls for\\
-Structure-Aware Metaheuristics}
+\title{Does the Score Do the Work? Permutation Controls for\\
+Score-Weighted Metaheuristics}
 
 % Author block withheld in the public copy. Fill in before submission.
 \author{Anonymous Author%
 \thanks{Manuscript prepared \today.}}
 
 \markboth{IEEE Transactions on Evolutionary Computation}%
-{Placebo Controls for Structure-Aware Metaheuristics}
+{Permutation Controls for Score-Weighted Metaheuristics}
 
 \maketitle
 
 \begin{abstract}
-Structure-aware metaheuristics weight population interactions by a structural
-score, on the claim that the score identifies informative agents. The usual
+Many population-based optimizers weight interactions by a per-neighbour
+score---a centrality on the population graph, the quality of a neighbour's
+best---on the claim that the score identifies informative agents. The usual
 evidence is an ablation, which cannot establish that claim: deleting the
 weighting changes the mixing operator as well as the information it carries,
 so any difference is equally consistent with the weights having been merely
@@ -44,21 +45,22 @@ the mechanism at full strength and destroys only the correspondence between a
 node's position and its weight. We prove this control equals uniform mixing in
 expectation while retaining the original's weight heterogeneity pathwise, and
 bound when such a comparison is informative at all. A second control randomises
-an adaptive component's selection rule. Applied to a published betweenness-weighted
-small-world optimizer, the mechanism proves active---displacing each update by
-a third of the population's spread---and uninformative: over $104$ function
-comparisons on two suites, three dimensions and five budgets, permutation changes
-nothing that survives correction, and at suite level the effect is equivalent
-to zero within a margin four times stricter than negligibility. Applying the
-instrument unchanged to two further mechanisms calibrates it, returning an
-intermediate effect on the fitness-influence weighting and a clear one on
-adaptive density selection ($\bar{\delta}=-0.101$, $p=1.5\times10^{-5}$): the
-null is a property of the mechanism, not of a test without power. Separating
-the confounded properties shows unequal weights help on $3$ of $28$ functions
-while the assignment helps on none, so betweenness---about $30\%$ of
-runtime---can be replaced by any heterogeneous weighting at no cost. What
-carries information here is not the scores computed on the graph but its coarse
-density.
+an adaptive component's selection rule. On a published betweenness-weighted
+small-world optimizer the mechanism proves active---displacing each update by a
+third of the population's spread---and uninformative: over $104$ function
+comparisons on two suites, three dimensions and five budgets, permutation
+changes nothing that survives correction. Unchanged, the same instrument
+returns a uniformly beneficial effect on one further mechanism, a uniformly
+harmful one on another, and---on a second published optimizer, the fully
+informed particle swarm---a quality weighting whose per-function effects reach
+$|\delta|=1$ in \emph{both} directions and cancel in the mean. The null is
+therefore a property of the mechanism, not of a test without power. The last
+case also carries a methodological lesson: a suite average alone calls it and
+the centrality null the same thing, while per-function correction alone hid a
+real effect in our own adaptive scheme, so both views are needed. Separating
+the properties an ablation confounds shows unequal weights help on $3$ of $28$
+functions while the assignment helps on none, so betweenness---about $30\%$ of
+runtime---can be replaced by any heterogeneous weighting at no cost.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -75,6 +77,7 @@ intelligence, network topology, reproducibility.
 \input{sections/setup}
 \input{sections/results}
 
+\input{sections/target2}
 \input{sections/discussion}
 \input{sections/threats}
 \input{sections/conclusion}

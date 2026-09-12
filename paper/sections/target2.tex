@@ -1,0 +1,108 @@
+\section{A Second Target}
+\label{sec:target2}
+
+A single audit says something about one algorithm. Whether the instrument
+discriminates, and whether the pattern generalises, needs a second target from
+a different family. We take the fully informed particle swarm
+(FIPS)~\cite{mendes2004fully}, whose published variants distribute a fixed
+budget $\phi$ among a particle's neighbours in proportion to a per-neighbour
+score. This is the same construction as \eqref{eq:W} in a velocity-based
+rather than a diffusion-based optimizer, so the controls transfer unchanged.
+
+We audit \emph{w}FIPS, the published variant that weights each neighbour's
+contribution by the quality of its personal best. The topology is
+Barab\'{a}si--Albert rather than a regular lattice: on a regular graph every
+degree is equal, $\chi_i$ of \eqref{eq:leverage} is identically zero, and a
+control would be vacuous by construction rather than by measurement.
+
+Two preconditions were checked before the comparison. The mechanism is active:
+the displacement it induces is $\rho=0.22$, against $0.25$--$0.31$ for the
+first target, so the two controls neutralise mechanisms of comparable
+strength. And \emph{w}FIPS is not distinguishable from plain FIPS in our setup
+($\bar{\delta}=+0.043$, $[-0.065,+0.150]$, $p=0.64$), consistent with the
+original report that the weighting variants gave no clear gain; this matters
+because it is what makes the next result surprising.
+
+\subsection{Large effects that cancel}
+\label{sec:target2:result}
+
+At suite level the quality weighting is indistinguishable from its permutation:
+$\bar{\delta}=-0.090$ with a $90\%$ interval of $[-0.278,+0.098]$, $p=0.52$,
+equivalent to zero only at the small-effect margin $|\delta|<0.33$. Read from
+that line alone, the conclusion would be the same as for centrality.
+
+It is not the same. The per-function view (Fig.~\ref{fig:calibration}, fourth
+row) shows $13$ of $28$ functions with $|\delta|>0.5$ and $15$ surviving Holm
+correction, in \emph{both} directions. Permuting the quality scores is
+catastrophic on $F_4$, $F_6$, $F_7$, $F_9$ and $F_{17}$---$\delta=-1.00$,
+every paired run, $p=2\times10^{-9}$---and significantly \emph{helpful} on
+$F_8$, $F_{21}$, $F_{24}$ ($\delta\approx+0.85$). The effect sorts by problem
+class:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+Class & mean $\delta$ \\
+\midrule
+Simple multimodal & $-0.431$ \\
+Hybrid & $-0.320$ \\
+Composition & $+0.314$ \\
+Unimodal & $+0.434$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+So the score carries a great deal of information, and the information is
+good on some landscape classes and actively misleading on others. Learning
+preferentially from the better neighbours helps where the neighbourhood's
+quality ordering predicts which direction is worth following, and hurts where
+it concentrates the swarm on an incumbent basin---which is what the sign flip
+between simple multimodal and composition landscapes describes.
+
+\subsection{Two ways a single view misleads}
+\label{sec:target2:views}
+
+The two targets fail the same suite-level test for opposite reasons, and the
+contrast is the methodological point.
+
+For centrality, the per-function effects are small everywhere: nothing
+happens, anywhere. For quality weighting, the per-function effects are large
+almost everywhere and cancel in the mean: a great deal happens, in both
+directions. A suite mean alone calls both ``no effect''.
+
+The mirror-image failure appeared in our own adaptive scheme
+(Section~\ref{sec:res:calibration}): there the per-function view under Holm
+correction credited only $3$ of $28$ wins and read as a weak effect, while the
+suite-level estimate was unambiguous ($\bar{\delta}=-0.101$,
+$p=1.5\times10^{-5}$, $24$ of $28$ in its favour). Correction across $28$
+comparisons is conservative enough to hide a benefit spread thinly over a
+suite.
+
+Neither view is sufficient and neither is wrong. A benefit that is diffuse
+survives aggregation and not correction; a benefit that is concentrated and
+sign-varying survives correction and not aggregation. We report both
+throughout and would encourage the same, because each of the two failures is
+demonstrated here on real data rather than argued in principle.
+
+\subsection{A synthetic mechanism, for contrast}
+\label{sec:target2:synthetic}
+
+The published FIPS family weights by quality or by distance; there is no
+degree-weighted member. We constructed one---$w_n=\deg(n)$ on the same
+scale-free graph---not as an audit of anyone's claim but to check that the
+instrument reports a harmful mechanism as harmful rather than merely as
+non-null. It does: $\bar{\delta}=+0.179$ with interval $[+0.074,+0.283]$,
+$p=0.014$, and the ablation is better still, uniform weighting beating degree
+weighting by $\bar{\delta}=+0.452$ at $p=1.5\times10^{-7}$. Concentrating
+influence on the hubs of a scale-free graph accelerates consensus and costs
+diversity, which is the mechanism $\chi_i$ measures: degree weighting has the
+largest leverage of any scheme we tested ($\chi=0.52$ against $0.40$ for
+quality).
+
+Taken together the instrument now separates five outcomes on one suite with
+one statistic: inert by construction (a vertex-transitive topology),
+active but uninformative (centrality), informative with class-dependent sign
+(quality), uniformly harmful (degree), and uniformly beneficial (adaptive
+density). A null returned by a test with that range is a statement about the
+mechanism.

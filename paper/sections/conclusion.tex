@@ -1,9 +1,10 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-Structure-aware metaheuristics are justified by a causal claim---that a
-structural quantity computed on the population graph carries information about
-where to search---which the usual evidence, an ablation, cannot establish. An
+Score-weighted metaheuristics are justified by a causal claim---that a
+per-neighbour score, computed on the population graph or on the run's own
+history, carries information about where to search---which the usual evidence,
+an ablation, cannot establish. An
 ablation deletes the component and so changes the optimizer's mixing operator
 along with the information it carries; the resulting difference is consistent
 with the weights having been merely unequal.
@@ -31,14 +32,27 @@ help slightly, on $3$ of $28$ functions, while which neighbour receives the
 large weight matters on none.
 
 A null result of this kind is only as good as the test's ability to return a
-non-null one, so we calibrated the instrument on two further mechanisms of the
-same optimizer, unchanged in suite, sample size and statistic. On the
-fitness-influence weighting it returns an intermediate, class-dependent effect,
-reaching $\delta=-0.80$ on a single composition function; on adaptive density
-selection it returns a clear one, $\bar{\delta}=-0.101$ at
-$p=1.5\times10^{-5}$. The ordering null--intermediate--clear is what a working
-instrument should produce, and it forecloses the reading that our centrality
-result reflects a test without power.
+non-null one, so we calibrated the instrument on four further mechanisms,
+unchanged in suite, sample size and statistic. Within the same optimizer it
+returns an intermediate, class-dependent effect on the fitness-influence
+weighting and a clear one on adaptive density selection ($\bar{\delta}=-0.101$,
+$p=1.5\times10^{-5}$). On a second published optimizer, the fully informed
+particle swarm, it returns a uniformly harmful effect for a synthetic
+degree weighting of our own construction, and for the published quality
+weighting something else again: per-function effects reaching $|\delta|=1$ in
+both directions, significant on $15$ of $28$ functions, that cancel to
+$\bar{\delta}=-0.090$ in the mean. Five distinguishable outcomes---inert by
+construction, uninformative, sign-varying, harmful, beneficial---on one suite
+with one statistic. A null returned by a test with that range is a statement
+about the mechanism.
+
+That fourth case also settles a question of reporting. Centrality and quality
+weighting fail the same suite-level test for opposite reasons: for one, nothing
+happens anywhere; for the other, a great deal happens in both directions. A
+suite average alone cannot tell them apart. The mirror failure appeared in our
+own adaptive scheme, where per-function correction across $28$ comparisons hid
+an effect that is unambiguous in aggregate. Neither view is sufficient, and we
+report both throughout.
 
 What carries information in this algorithm, then, is not the scores computed on
 the graph but the graph's coarse density: consequential in $30$ of $49$

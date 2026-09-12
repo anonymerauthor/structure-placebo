@@ -3,13 +3,21 @@
 
 \subsection{Scope of the conclusion}
 
-We audit one published centrality-weighted optimizer and one adaptive scheme of
-our own. The controls are defined for the general form \eqref{eq:master}, and
-Proposition~\ref{prop:mean} holds for any score-proportional weighting, but the
-empirical finding is about these two mechanisms. Whether other structural
-statistics---closeness, eigenvector centrality, PageRank---or other graph
-families behave the same way is untested here. We regard this as the principal
-limitation: the instrument is general, the evidence is not yet.
+We audit two published optimizers---a centrality-weighted diffusion method and
+the fully informed particle swarm---together with an adaptive scheme and a
+synthetic weighting of our own. The controls are defined for the general form
+\eqref{eq:master}, and Proposition~\ref{prop:mean} holds for any
+score-proportional weighting, but the empirical findings are about these
+mechanisms. Whether other structural statistics---closeness, eigenvector
+centrality, PageRank---or other graph families behave the same way is untested
+here. We regard this as the principal limitation: the instrument is general,
+the evidence covers two algorithm families.
+
+The two targets differ in what their scores are computed from, deliberately:
+centrality is a property of the graph alone, quality a property of the run's
+own history. That they yield different outcomes under the same control is part
+of the calibration, but it also means neither should be read as representative
+of score weighting in general.
 
 Two considerations bear on how far the result plausibly extends. The argument
 of Section~\ref{sec:discussion} turns on the graph being fixed before the

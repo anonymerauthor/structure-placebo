@@ -12,6 +12,20 @@ F.apply()
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def _data(name: str) -> str:
+    """Resolve a results file.
+
+    Published copies live in data/; a working tree may still have them under
+    outputs/. Checking both keeps the figures reproducible from a fresh clone.
+    """
+    base = os.path.basename(name)
+    for d in ("data", "outputs"):
+        p = os.path.join(ROOT, d, base)
+        if os.path.exists(p):
+            return p
+    return os.path.join(ROOT, "data", base)
+
+
 def cliffs(a, b):
     n = len(a) * len(b)
     return (sum(x > y for x in a for y in b) - sum(x < y for x in a for y in b)) / n
@@ -47,9 +61,9 @@ def effects(df, left, right, fcol, vcol):
 def fig_placebo_forest():
     """Effect of destroying the structure-weight association, three suites."""
     panels = []
-    p20 = os.path.join(ROOT, "outputs/placebo_study.csv")
-    p105 = os.path.join(ROOT, "outputs/placebo_105k.csv")
-    pcec = os.path.join(ROOT, "outputs/cec2017_placebo.csv")
+    p20 = _data("placebo_study.csv")
+    p105 = _data("placebo_105k.csv")
+    pcec = _data("cec2017_placebo.csv")
     if os.path.exists(p20):
         panels.append(("Classic $F_{1..23}$, 20 000 evals",
                        effects(pd.read_csv(p20), "social", "shuffled", "function", "best")))
@@ -59,7 +73,7 @@ def fig_placebo_forest():
     if os.path.exists(pcec):
         panels.append(("CEC2017 $D{=}30$, 300 000 evals",
                        effects(pd.read_csv(pcec), "social", "shuffled", "fid", "error")))
-    p50 = os.path.join(ROOT, "outputs/cec2017_D50.csv")
+    p50 = _data("cec2017_D50.csv")
     if os.path.exists(p50):
         panels.append(("CEC2017 $D{=}50$, 500 000 evals",
                        effects(pd.read_csv(p50), "social", "shuffled", "fid", "error")))
@@ -93,7 +107,7 @@ def fig_placebo_forest():
 
 def fig_mechanism_magnitude():
     """The mechanism is not inert: it displaces the update substantially."""
-    path = os.path.join(ROOT, "outputs/mechanism_probe.csv")
+    path = _data("mechanism_probe.csv")
     if not os.path.exists(path):
         return None
     d = pd.read_csv(path)
@@ -114,7 +128,7 @@ def fig_mechanism_magnitude():
 
 def fig_density_law():
     """Optimal neighbourhood density against landscape ruggedness."""
-    path = os.path.join(ROOT, "outputs/density_law_full.csv")
+    path = _data("density_law_full.csv")
     if not os.path.exists(path):
         return None
     d = pd.read_csv(path)
@@ -145,7 +159,7 @@ def fig_density_law():
 
 def fig_ranks():
     """Mean Friedman ranks of the six arms on CEC2017."""
-    path = os.path.join(ROOT, "outputs/cec2017_D30_all.csv")
+    path = _data("cec2017_D30_all.csv")
     if not os.path.exists(path):
         return None
     from scipy.stats import rankdata
@@ -194,11 +208,11 @@ def fig_equivalence():
 
     panels = []
     for label, path, fcol, vcol in [
-        ("$D=10$", "outputs/cec2017_D10_all.csv", "fid", "error"),
-        ("$D=30$", "outputs/cec2017_D30_51.csv", "fid", "error"),
-        ("$D=50$", "outputs/cec2017_D50.csv", "fid", "error"),
+        ("$D=10$", _data("cec2017_D10_all.csv"), "fid", "error"),
+        ("$D=30$", _data("cec2017_D30_51.csv"), "fid", "error"),
+        ("$D=50$", _data("cec2017_D50.csv"), "fid", "error"),
     ]:
-        p = os.path.join(ROOT, path)
+        p = path
         if os.path.exists(p):
             t = analyse(pd.read_csv(p), "social", "shuffled", fcol, vcol, M, 4000)
             panels.append((label, t.reset_index(drop=True)))
@@ -249,18 +263,19 @@ def fig_calibration():
     """
     contrasts = [
         ("Centrality assignment", "social", "shuffled",
-         "outputs/cec2017_D30_51_all.csv"),
-        ("Adaptive selection", "ads", "random_K",
-         "outputs/cec2017_D30_51_all.csv"),
+         _data("cec2017_D30_51_all.csv")),
         ("Fitness influence", "social", "shuffled_inf",
-         "outputs/cec2017_poscontrol.csv"),
+         _data("cec2017_poscontrol.csv")),
+        ("Adaptive selection", "ads", "random_K",
+         _data("cec2017_D30_51_all.csv")),
+        ("wFIPS quality", "goodness", "goodness_permuted", _data("fips.csv")),
+        ("FIPS degree (ours)", "degree", "permuted", _data("fips.csv")),
     ]
     rows = []
     for label, left, right, path in contrasts:
-        p = os.path.join(ROOT, path)
-        if not os.path.exists(p):
+        if not os.path.exists(path):
             continue
-        df = pd.read_csv(p)
+        df = pd.read_csv(path)
         if not {left, right}.issubset(set(df.variant)):
             continue
         deltas = []

@@ -1,10 +1,13 @@
-"""Second audit target: degree-weighted FIPS on a scale-free topology.
+"""Second audit target: the FIPS family on a scale-free topology.
 
 Same protocol as the first target, same statistic, same seeds. The arms are
 
-    degree     the published structural variant, w_n = deg(n)
-    permuted   the same degree multiset, permuted across nodes   [control]
-    uniform    equal weights, the ablation
+    uniform             FIPS as published, equal weights
+    goodness            wFIPS as published, weighted by neighbour quality
+    goodness_permuted   the same weights, detached from who is good  [control]
+    degree / permuted   a synthetic structural weighting of our own, kept
+                        because it shows the instrument detects a harmful
+                        mechanism as well as a null one
 
 A second target matters because a single null tells you about one algorithm;
 two targets tell you whether the protocol distinguishes between them.
@@ -28,7 +31,9 @@ from budget import Budget          # noqa: E402
 from fips import FIPS              # noqa: E402
 
 CEC_IDS = [1] + list(range(3, 30))          # F2 per errata, F30 unavailable
-ARMS = ["degree", "permuted", "uniform"]
+# uniform is FIPS as published; goodness is wFIPS as published; the pair
+# degree/permuted is our own synthetic mechanism, reported as such.
+ARMS = ["uniform", "goodness", "goodness_permuted", "degree", "permuted"]
 OUTDIR = os.path.join(HERE, "outputs", "fips")
 EVALS_PER_DIM = 10_000
 

@@ -1,7 +1,7 @@
 \section{A Framework for Testing Structural Attribution}
 \label{sec:method}
 
-\subsection{A common form for structure-aware updates}
+\subsection{A common form for score-weighted updates}
 \label{sec:form}
 
 Let $V=\{1,\dots,N\}$ index a population of candidate solutions with positions
@@ -23,8 +23,8 @@ X_{t+1} \;=\; (1-\eta_t)\,X_t \;+\; \eta_t\Bigl[\, \textstyle\sum_{r} \theta_{r,
 where each $W^{(r)}_t \in \mathbb{R}^{N\times N}$ is row-stochastic and
 supported on $E_t$, the $\theta_{r,t}$ are non-negative schedule weights,
 $B_t$ collects rank-one drift terms toward incumbents, and $\Xi_t$ is a
-mutation or noise term. Everything specific to a structure-aware method sits
-in how the mixing operators $W^{(r)}_t$ are built from the graph.
+mutation or noise term. Everything specific to a score-weighted method sits
+in how the mixing operators $W^{(r)}_t$ are built.
 
 The construction under test assigns each node a structural score
 $c_t : V \to \mathbb{R}_{\ge 0}$---betweenness centrality in our primary case

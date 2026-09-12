@@ -99,11 +99,20 @@ applying a stringent test to a published method and a lenient one to ourselves.
   evidence against predicting it in advance.
 
 \item \textbf{Calibration of the instrument.} The same controls, unchanged in
-  suite, sample size and statistic, are applied to two further mechanisms of
-  the same optimizer and return an intermediate effect on one and a clear
-  effect ($\bar{\delta}=-0.101$, $p=1.5\times10^{-5}$) on the other. The null
-  on the centrality assignment therefore cannot be attributed to a test without
-  power.
+  suite, sample size and statistic, are applied to four further mechanisms
+  across two optimizers and return five distinguishable outcomes: inert by
+  construction, uninformative, sign-varying by problem class, uniformly
+  harmful, and uniformly beneficial ($\bar{\delta}=-0.101$,
+  $p=1.5\times10^{-5}$). The null on the centrality assignment therefore cannot
+  be attributed to a test without power.
+
+\item \textbf{A second published target, and a reporting lesson.} On the fully
+  informed particle swarm, the published quality weighting produces
+  per-function effects reaching $|\delta|=1$ in both directions, significant on
+  $15$ of $28$ functions, which cancel in the suite mean. A suite average alone
+  would call this and the centrality null the same thing; per-function
+  correction alone hid a real effect in our own adaptive scheme. Both failures
+  are demonstrated here on data rather than argued in principle.
 
 \item \textbf{Self-application.} The adaptive density scheme we propose is
   subjected to the second control on the same terms; we report that it passes,

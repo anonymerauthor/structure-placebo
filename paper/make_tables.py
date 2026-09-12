@@ -6,6 +6,20 @@ import numpy as np, pandas as pd
 from scipy.stats import rankdata, wilcoxon
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _data(name: str) -> str:
+    """Resolve a results file.
+
+    Published copies live in data/; a working tree may still have them under
+    outputs/. Checking both keeps the figures reproducible from a fresh clone.
+    """
+    base = os.path.basename(name)
+    for d in ("data", "outputs"):
+        p = os.path.join(ROOT, d, base)
+        if os.path.exists(p):
+            return p
+    return os.path.join(ROOT, "data", base)
 OUT = os.path.join(ROOT, "paper", "tables")
 
 ARMS = ["social", "shuffled", "uniform_K4", "fixed_K16", "random_K", "ads"]
