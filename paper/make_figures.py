@@ -65,10 +65,10 @@ def fig_placebo_forest():
     p105 = _data("placebo_105k.csv")
     pcec = _data("cec2017_placebo.csv")
     if os.path.exists(p20):
-        panels.append(("Classic $F_{1..23}$, 20 000 evals",
+        panels.append(("Classic suite (10 fns), 20 000 evals",
                        effects(pd.read_csv(p20), "social", "shuffled", "function", "best")))
     if os.path.exists(p105):
-        panels.append(("Classic $F_{1..23}$, 105 000 evals",
+        panels.append(("Classic suite (10 fns), 105 000 evals",
                        effects(pd.read_csv(p105), "social", "shuffled", "function", "best")))
     if os.path.exists(pcec):
         panels.append(("CEC2017 $D{=}30$, 300 000 evals",
