@@ -77,7 +77,9 @@ prediction from landscape ruggedness.
 
 ```
 audit/          the two controls and the vectorized diffusion path
-experiments/    one module per study; each writes per-run JSON records
+experiments/    one module per study; the search studies write per-run JSON
+                records, the probe modules measure the graph and the score
+                vector directly and write a CSV
 scripts/        bootstrap, sharded runner, pipeline driver, equivalence tests
 patches/        the complete set of changes made to the audited implementation
 data/           consolidated per-run results as CSV
