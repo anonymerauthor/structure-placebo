@@ -27,6 +27,26 @@ Score-Weighted Metaheuristics''}
 \markboth{Supplementary Material}{}
 \maketitle
 
+\section{Displacement Induced by the Weighting}
+\label{sec:supp:magnitude}
+
+Fig.~\ref{fig:supp:magnitude} reports the normalised displacement $\rho$ of
+the main text for every graph configuration used in the original report and
+in its reference implementation. It is the precondition check the main text
+summarises: a permutation control is informative only where the mechanism it
+neutralises is active.
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_mechanism_magnitude}
+\caption{Displacement induced by centrality weighting, in units of the
+population's own spread. Across the published and implemented settings the
+mechanism moves each update by a quarter to a third of the population spread;
+on the vertex-transitive ring lattice ($p=0$) it is inert to machine
+precision.}
+\label{fig:supp:magnitude}
+\end{figure}
+
 \section{Per-Function Results on CEC2017}
 \label{sec:supp:tables}
 
@@ -77,7 +97,7 @@ sample size places them inside that band.
 \centering
 \includegraphics[width=\textwidth]{fig_equivalence}
 \caption{Equivalence testing per function, published method against its
-permutation control, at two dimensions. An interval contained in the shaded
+permutation control, at all three protocol dimensions. An interval contained in the shaded
 margin establishes equivalence at $\alpha=0.05$.}
 \label{fig:supp:equiv}
 \end{figure*}

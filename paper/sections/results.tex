@@ -6,24 +6,16 @@
 
 Before asking whether the centrality weighting is informative we establish that
 it is active, since a control on an inert mechanism is uninformative
-(Section~\ref{sec:leverage}). Fig.~\ref{fig:magnitude} reports the normalised
-displacement $\rho$ of \eqref{eq:relshift} for the graph configurations used in
-the original report and in its reference implementation.
-
-\begin{figure}[t]
-\centering
-\includegraphics{fig_mechanism_magnitude}
-\caption{Displacement induced by centrality weighting, in units of the
-population's own spread. The mechanism moves each update by a quarter to a
-third of the population spread; it is not a small correction.}
-\label{fig:magnitude}
-\end{figure}
+(Section~\ref{sec:leverage}). We measure the normalised displacement $\rho$ of
+\eqref{eq:relshift} for every graph configuration used in the original report
+and in its reference implementation; the supplementary material plots them all.
 
 Across the published and implemented settings $\rho$ ranges from $0.25$ to
 $0.31$: the centrality-weighted aggregate differs from the plain neighbourhood
-mean by roughly a third of the population's spread. The coefficient of
-variation of betweenness over nodes is $0.65$--$0.89$, so the weights are
-strongly heterogeneous rather than near-uniform.
+mean by roughly a third of the population's spread, which is not a small
+correction. The coefficient of variation of betweenness over nodes is
+$0.65$--$0.89$, so the weights are strongly heterogeneous rather than
+near-uniform.
 
 Two predictions of Section~\ref{sec:leverage} are confirmed directly. On the
 ring lattice ($p=0$), which is vertex-transitive, we measure
@@ -92,30 +84,24 @@ the far stricter $|\delta|<0.05$. A one-sample Wilcoxon test on the
 per-function effects gives $p=0.34$. At $D=10$ with $30$ runs the mean effect
 is $-0.004$, interval $[-0.034,+0.026]$, likewise inside $|\delta|<0.05$.
 
-Per function the picture is different, and the reason is worth separating into
-two parts. Raising the runs from $30$ to $51$ narrows the median $90\%$
-half-width from $0.181$ to $0.139$---exactly the $\sqrt{30/51}$ the sampling
-theory predicts---and raises the count of formally equivalent functions from
-$1$ to $6$ of $28$. It does not raise it further, because equivalence at margin
-$m$ requires $|\hat{\delta}|+\text{half-width}<m$, not merely
-$\text{half-width}<m$: with a median $|\hat{\delta}|$ of $0.063$, reaching
-$|\delta|<0.147$ on the median function would take roughly $100$ runs. And no
-sample size suffices for all of them: on $4$ of $28$ functions the estimated
-effect already exceeds $0.147$, so a genuine, if small, difference is present
-there. At the small-effect margin $|\delta|<0.33$, $26$ of $28$ are equivalent.
-
-Per-function intervals are given in the supplementary material. Most sit
-inside the band but cross its edge, which is the visual form of this
-distinction: failing to detect a difference is not the same as establishing
-its absence.
-
+Per function the picture is different. Raising the runs from $30$ to $51$
+narrows the median $90\%$ half-width from $0.181$ to $0.139$---exactly the
+$\sqrt{30/51}$ the sampling theory predicts---and raises the count of formally
+equivalent functions only from $1$ to $6$ of $28$, because equivalence at
+margin $m$ requires $|\hat{\delta}|+\text{half-width}<m$ rather than merely
+$\text{half-width}<m$. With a median $|\hat{\delta}|$ of $0.063$ the median
+function would need roughly $100$ runs, and on $4$ of $28$ the estimate already
+exceeds $0.147$, so no sample size places those inside that band: a genuine, if
+small, difference is present there. At the small-effect margin $|\delta|<0.33$,
+$26$ of $28$ are equivalent. The supplementary material gives the per-function
+intervals and the margin sensitivity.
 
 We state the conclusion at the strength the evidence supports, which is not
 that the two arms are identical. Across the suite the assignment of centrality
 scores to graph positions has an effect equivalent to zero within a margin four
-times stricter than the negligibility threshold. Per function, effects are
-bounded within a small margin, a handful are near the negligibility boundary,
-and none survives correction as a difference.
+times stricter than negligibility. Per function, effects are bounded within a
+small margin, a handful sit near the negligibility boundary, and none survives
+correction as a difference.
 
 \subsection{Heterogeneity does what the assignment does not}
 \label{sec:res:p1p2}
@@ -141,9 +127,12 @@ fixed random draw suffices---at no cost in solution quality.
 \label{sec:res:calibration}
 
 A null result is worth only as much as the test's ability to return a non-null
-one. We therefore ran the same controls on two further mechanisms of the same
-optimizer, on the same suite, at the same sample size and with the same
-statistic. Fig.~\ref{fig:calibration} places the three side by side.
+one. We therefore ran the same controls on four further mechanisms---two more
+within this optimizer, two in the second target of Section~\ref{sec:target2}---%
+on the same suite, at the same sample size and with the same statistic.
+Fig.~\ref{fig:calibration} places all five side by side. This subsection covers
+the two within this optimizer; the other two are discussed with the second
+target.
 
 \emph{Fitness influence} (Section~\ref{sec:positive}) is the positive control:
 the permuted score is a direct function of objective values the run has already
@@ -180,7 +169,7 @@ per-function view understates it, and both should be reported.
 \begin{figure}[t]
 \centering
 \includegraphics{fig_calibration}
-\caption{The same controls on three mechanisms of the same optimizer, on
+\caption{The same controls on five mechanisms across two optimizers, on
 CEC2017 at $D=30$. Points are per-function effects, intervals are $90\%$
 bootstrap CIs on the suite mean. The instrument separates a null mechanism from
 an intermediate and a clear one without changing suite, sample size or

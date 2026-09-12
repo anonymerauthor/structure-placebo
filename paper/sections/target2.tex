@@ -37,21 +37,9 @@ correction, in \emph{both} directions. Permuting the quality scores is
 catastrophic on $F_4$, $F_6$, $F_7$, $F_9$ and $F_{17}$---$\delta=-1.00$,
 every paired run, $p=2\times10^{-9}$---and significantly \emph{helpful} on
 $F_8$, $F_{21}$, $F_{24}$ ($\delta\approx+0.85$). The effect sorts by problem
-class:
-
-\begin{center}
-\small
-\begin{tabular}{@{}lr@{}}
-\toprule
-Class & mean $\delta$ \\
-\midrule
-Simple multimodal & $-0.431$ \\
-Hybrid & $-0.320$ \\
-Composition & $+0.314$ \\
-Unimodal & $+0.434$ \\
-\bottomrule
-\end{tabular}
-\end{center}
+class: mean $\delta$ is $-0.431$ on the simple multimodal functions and
+$-0.320$ on the hybrids, where permuting hurts, against $+0.314$ on the
+compositions and $+0.434$ on the unimodal pair, where it helps.
 
 So the score carries a great deal of information, and the information is
 good on some landscape classes and actively misleading on others. Learning

@@ -28,21 +28,16 @@ landscape---edges reflecting estimated barrier heights or basin membership
 rather than a Watts--Strogatz prior---would make betweenness a statement about
 the search space rather than about an arbitrary lattice. Local optima
 networks~\cite{ochoa2008lon} build exactly such graphs, but offline and for
-characterisation; the wider landscape-analysis literature~\cite{malan2021survey}
-is likewise diagnostic rather than generative. Whether an online estimate is accurate enough to drive
-search is open, and the controls developed here are the instrument that would
-settle it: the prediction is that on a landscape-derived graph, unlike the one
-tested, permutation would hurt.
+characterisation, and the wider landscape-analysis
+literature~\cite{malan2021survey} is likewise diagnostic rather than
+generative. Whether an online estimate is accurate enough to drive search is
+open, and the controls developed here would settle it.
 
-\subsection{A practical consequence}
-
-Betweenness centrality is roughly $30\%$ of per-iteration runtime in the
-reference implementation, and computing it costs $O(N\!\cdot\!M)$. Our results
-say it can be replaced by any heterogeneous weighting---a fixed random draw
-suffices---with no measurable loss, and by uniform weighting at a cost of about
-$0.17$ rank units on the CEC2017 suite. For practitioners the recommendation is
-concrete: if a centrality-weighted method is used, compute the cheapest
-centrality available, or none.
+The practical consequence follows directly. Betweenness costs
+$O(N\!\cdot\!M)$ and roughly $30\%$ of per-iteration runtime, and may be
+replaced by any heterogeneous weighting at no measurable loss, or by uniform
+weighting at about $0.17$ rank units: compute the cheapest centrality
+available, or none.
 
 \subsection{Density is the component that survives, and it resists prediction}
 
@@ -57,28 +52,23 @@ landscape ruggedness descriptor. The correlation is moderate
 contradicted outright by the penalised functions.
 
 That negative result is what motivated an adaptive scheme rather than a
-predictive one, and it is worth stating why the distinction matters. A
-predictor must be right about the landscape; an adaptive rule need only be
-right about which of a few alternatives is currently doing better. The second
-is a far weaker requirement, and our results suggest it is the achievable one:
-the predictive route fails at $D=10$ and on the penalised functions, while the
-adaptive route beats its own randomisation on $24$ of $28$ functions.
+predictive one, and the distinction matters: a predictor must be right about
+the landscape, whereas an adaptive rule need only be right about which of a few
+alternatives is currently doing better. The weaker requirement is the
+achievable one here---the predictive route fails at $D=10$ and on the penalised
+functions, while the adaptive route beats its own randomisation on $24$ of $28$
+functions.
 
 \subsection{On applying the instrument to our own proposal}
 
 We built \textsc{Ads} and subjected it to the same policy control we would ask
 of anyone else. It passes: informed selection beats uniform switching over the
-same densities by $\bar{\delta}=-0.101$, $p=1.5\times10^{-5}$, on $24$ of $28$
-functions, so the benefit is not merely from varying density, which both arms
-share.
-
-Reaching that conclusion required correcting our own first reading. Under
-per-function Holm correction \textsc{Ads} wins on $3$ of $28$, which we
-initially took for a weak effect; correction across $28$ comparisons is
-conservative, and a benefit spread thinly across a suite fails it while being
-obvious in aggregate. The diagnostic is the direction count, visible only when
-the suite is the unit of analysis. Section~\ref{sec:target2:views} gives the
-mirror case.
+same densities on $24$ of $28$ functions, so the benefit is not merely from
+varying density, which both arms share. Reaching that conclusion required
+correcting our own first reading, since under per-function Holm correction
+\textsc{Ads} wins on only $3$ of $28$ and reads as weak; the diagnostic is the
+direction count, visible only when the suite is the unit of analysis
+(Section~\ref{sec:target2:views} gives the mirror case).
 
 The contrasts together also say something about the optimizer under study. Its
 two weighting mechanisms are null and weak at suite level, while the structural

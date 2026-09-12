@@ -43,9 +43,17 @@ computation, about $30\%$ of per-iteration runtime.
 \subsection{Benchmarks and protocol}
 \label{sec:benchmarks}
 
-\emph{Classic suite.} The $23$ functions of Yao \emph{et
-al.}~\cite{yao1999evolutionary}, used because they are the suite on which the
-method under test was originally reported. We run them at two budgets,
+\emph{Classic suite.} The suite of Yao \emph{et
+al.}~\cite{yao1999evolutionary}, used because it is the one on which the method
+under test was originally reported. The control comparison uses ten of its $23$
+functions---\textsc{Sphere}, \textsc{Schwefel}~1.2, \textsc{Rosenbrock},
+\textsc{Step}, \textsc{Quartic}, \textsc{Schwefel}~2.26, \textsc{Rastrigin},
+\textsc{Ackley}, \textsc{Griewank} and \textsc{Penalized}---one or two from
+each of its unimodal, discontinuous, multimodal and penalised groups, chosen
+before any result was seen. The remaining thirteen are fixed-dimension
+problems, which the density sweep of Section~\ref{sec:res:density} runs at
+their native dimensions but which are ill-suited to a paired contrast at
+$D=30$ (Section~\ref{sec:corrections}). We run the ten at two budgets,
 $2\times10^{4}$ and $1.05\times10^{5}$ evaluations, the latter matching the
 original report.
 
@@ -56,6 +64,15 @@ $D\in\{10,30,50\}$. Two functions are absent: $F_{2}$, which the organisers
 advise against for unstable behaviour in higher dimensions, and $F_{30}$,
 which the reference implementation we use does not provide---leaving $28$
 functions.
+
+\emph{Repetitions.} The primary contrast---the published method against its
+permutation control---is run at $D=30$ for the $51$ repetitions the CEC2017
+protocol prescribes, and every number we report for that contrast at $D=30$
+uses all $51$. The other four arms, and all arms at $D\in\{10,50\}$, are run
+for $30$. Comparisons involving those arms, including the six-arm table and
+rank ordering in the supplementary material, therefore use the common $30$-run
+subset of all six; mixing run counts within one comparison would break the
+pairing the statistics rely on.
 
 Population size is $N=60$ throughout. Seeds are $0,1,\dots$ shared across
 arms, so every comparison is paired: an arm and its control start from the

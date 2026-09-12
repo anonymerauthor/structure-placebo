@@ -209,22 +209,42 @@ confers belongs to variation per se rather than to selection.
 \label{sec:stats}
 
 Because the claim under test is an equivalence, a non-significant hypothesis
-test is not by itself evidence: it is equally consistent with an
-underpowered study. We therefore also report two one-sided
-tests~\cite{schuirmann1987comparison,lakens2017equivalence}. We therefore report effect sizes with interval estimates
-as the primary quantity and treat tests as secondary.
+test is not by itself evidence: it is equally consistent with an underpowered
+study. We therefore report effect sizes with interval estimates as the primary
+quantity, add two one-sided
+tests~\cite{schuirmann1987comparison,lakens2017equivalence}, and treat
+difference tests as secondary.
 
-Runs are paired by seed, so a variant and its control receive the same initial
-population and the same random stream. For each function $f$ we report the
-median outcome, Cliff's $\delta_f$ with a bias-corrected percentile bootstrap
-interval over the $30$ paired runs, and a two-sided Wilcoxon signed-rank test,
-with Holm's step-down correction over the functions of a
-suite~\cite{holm1979simple}, following established practice for this
-setting~\cite{derrac2011practical,garcia2009study}.
-Cliff's $\delta$~\cite{cliff1993dominance} is used because outcomes span many
-orders of magnitude across a suite; we adopt the conventional threshold
-$|\delta|<0.147$ for a negligible effect~\cite{romano2006exploring}. When more
-than two variants are compared we apply a Friedman test per function and
-report mean ranks across the suite. Reporting $\delta_f$ with intervals lets a
-reader verify that the intervals exclude effects large enough to matter, which
-is the substantive question, rather than merely failing to exclude zero.
+Runs are paired by seed: a variant and its control receive the same initial
+population and the same random stream. Per function we report the median
+outcome, Cliff's $\delta_f$~\cite{cliff1993dominance} with a percentile
+bootstrap interval, and a two-sided Wilcoxon signed-rank test under Holm's
+step-down correction over the functions of a suite~\cite{holm1979simple},
+following established practice for this
+setting~\cite{derrac2011practical,garcia2009study}. When more than two variants
+are compared we apply a Friedman test per function and report mean ranks.
+
+Two choices in that protocol deserve stating explicitly.
+
+\emph{The effect size and the pairing.} Cliff's $\delta$ estimates stochastic
+dominance, $P(X{>}Y)-P(X{<}Y)$, between the two outcome \emph{distributions};
+it is computed over all cross-pairs and is therefore an unpaired statistic
+even though the runs are paired. This is deliberate. The substantive question
+is whether one arm tends to return worse results than the other, not whether it
+does so within a shared random stream, and the unpaired form is invariant to
+any monotone rescaling of the objective---indispensable on a suite whose errors
+span eighteen orders of magnitude, where a paired mean difference is
+uninterpretable. Pairing is used where it adds power and validity: the Wilcoxon
+test operates on within-seed differences, and the bootstrap resamples seed
+pairs rather than runs, so the intervals inherit the paired design. A reader
+who prefers a strictly paired effect size can recover one from the per-run
+records, which are released.
+
+\emph{The equivalence margin.} We adopt $|\delta|<0.147$ for a negligible
+effect and $|\delta|<0.33$ for a small one, the conventional thresholds for
+this statistic~\cite{romano2006exploring}, rather than choosing a margin to
+suit the data. Because that choice is a judgement and not a measurement, every
+equivalence claim is also reported against a range of margins
+(Section~\ref{sec:res:tost}), so a reader who prefers a stricter or looser
+bound can read the conclusion off directly. No claim in this paper depends on
+the margin taking one particular value.
