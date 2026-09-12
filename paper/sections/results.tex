@@ -36,7 +36,7 @@ behaves as hard masking rather than soft weighting.
 \subsection{The assignment carries no information}
 \label{sec:res:placebo}
 
-Table~\ref{tab:placebo} and Fig.~\ref{fig:forest} give the comparison between
+Table~\ref{tab:placebo} gives the comparison between
 the published method and its permutation control.
 
 \begin{table}[t]
@@ -61,14 +61,6 @@ CEC2017 & 50 & $5.0\!\times\!10^{5}$  & 28 & 0/0 & $-0.032$ $[-0.066,+0.002]$ \\
 \end{tabular}
 \end{table}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{fig_placebo_forest}
-\caption{Effect of destroying the structure--weight correspondence, per
-function, with bootstrap intervals. Shading marks the negligible band
-$|\delta|<0.147$. No interval excludes zero after correction.}
-\label{fig:forest}
-\end{figure*}
 
 On $104$ function comparisons spanning two suites, three dimensions, five
 budgets and a twenty-fivefold range of evaluation counts, permuting betweenness
@@ -112,22 +104,11 @@ sample size suffices for all of them: on $4$ of $28$ functions the estimated
 effect already exceeds $0.147$, so a genuine, if small, difference is present
 there. At the small-effect margin $|\delta|<0.33$, $26$ of $28$ are equivalent.
 
-Fig.~\ref{fig:equivalence} shows the intervals directly. Most sit inside the
-band but cross its edge, which is the visual form of the distinction this
-subsection draws: failing to detect a difference is not the same as
-establishing its absence, and only the intervals lying wholly inside the margin
-do the latter.
+Per-function intervals are given in the supplementary material. Most sit
+inside the band but cross its edge, which is the visual form of this
+distinction: failing to detect a difference is not the same as establishing
+its absence.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{fig_equivalence}
-\caption{Equivalence testing per function, published method against its
-permutation control. Shading marks the negligible band $|\delta|<0.147$; an
-interval contained in it establishes equivalence at $\alpha=0.05$. Most
-intervals straddle the boundary, so the per-function question stays open even
-where the difference test is comfortably non-significant.}
-\label{fig:equivalence}
-\end{figure*}
 
 We state the conclusion at the strength the evidence supports, which is not
 that the two arms are identical. Across the suite the assignment of centrality
@@ -207,24 +188,14 @@ statistic.}
 \label{fig:calibration}
 \end{figure}
 
-Mean ranks over the six arms at $D=30$ (Fig.~\ref{fig:ranks}) place the two
-sparse arms first (\textsc{Social} $3.121$, \permcontrol{} $3.170$), then
-uniform mixing ($3.335$), with the density-varying arms last
-($3.676$--$3.977$). That \textsc{Social} and \permcontrol{} are adjacent,
-separated by $0.05$ rank units with overlapping standard errors, is the finding
-of Section~\ref{sec:res:placebo} in another form. Per-function medians for all
-six arms are given in Table~\ref{tab:cec30}.
+Mean ranks over the six arms at $D=30$ place the two sparse arms first
+(\textsc{Social} $3.121$, \permcontrol{} $3.170$), then uniform mixing
+($3.335$), with the density-varying arms last ($3.676$--$3.977$). That
+\textsc{Social} and \permcontrol{} are adjacent, separated by $0.05$ rank units
+with overlapping standard errors, is the finding of
+Section~\ref{sec:res:placebo} in another form. Per-function medians and the
+rank plot are given in the supplementary material.
 
-\begin{figure}[t]
-\centering
-\includegraphics{fig_ranks}
-\caption{Mean Friedman ranks on CEC2017 at $D=30$, with standard errors over
-the $28$ functions. The published method and its permutation control are
-adjacent and overlapping.}
-\label{fig:ranks}
-\end{figure}
-
-\input{tables/cec2017_D30}
 
 \subsection{What density does}
 \label{sec:res:density}
@@ -239,16 +210,9 @@ The optimum is problem- and dimension-dependent. Ruggedness, measured as the
 lag-one autocorrelation of fitness along a random walk and therefore computable
 online, correlates with the preference for dense neighbourhoods at
 $\rho_{s}=-0.61$ ($p=3.7\times10^{-4}$) over the configurations where density
-matters (Fig.~\ref{fig:density}).
+matters (supplementary material).
 
-\begin{figure}[t]
-\centering
-\includegraphics{fig_density_law}
-\caption{Preference for dense neighbourhoods against landscape ruggedness,
-over the $30$ configurations in which density has a significant effect. The
-association is moderate and carried largely by the most rugged functions.}
-\label{fig:density}
-\end{figure} That correlation is carried largely by the three most rugged
+That correlation is carried largely by the three most rugged
 functions, and it vanishes at $D=10$ ($\rho_{s}=-0.15$, $p=0.63$) while holding
 at $D=30$ ($-0.73$) and $D=50$ ($-0.63$). \textsc{Penalized} and
 \textsc{Penalized2} are clear counterexamples, smooth by the proxy yet

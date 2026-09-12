@@ -93,14 +93,14 @@ def fig_placebo_forest():
         ax.hlines(y, t.lo, t.hi, color=F.c("blue"), lw=0.9, zorder=2)
         ax.plot(t.delta, y, "o", color=F.c("blue"), mfc="white", mew=0.8, zorder=3)
         ax.set_yticks(y)
-        ax.set_yticklabels(t.f, fontsize=5.5)
+        ax.set_yticklabels(t.f, fontsize=8)
         ax.set_xlim(-1.05, 1.05)
         ax.set_xticks([-1, -0.5, 0, 0.5, 1])
         ax.set_xlabel(r"Cliff's $\delta$   (published $-$ permuted)")
-        ax.set_title(title, fontsize=7)
+        ax.set_title(title, fontsize=8)
         ax.invert_yaxis()
         ax.tick_params(axis="y", length=0)
-    axes[0].legend(loc="lower left", fontsize=6)
+    axes[0].legend(loc="lower left", fontsize=8)
     fig.tight_layout(w_pad=0.6)
     return F.save(fig, "fig_placebo_forest", os.path.join(ROOT, "paper/figures"))
 
@@ -117,7 +117,7 @@ def fig_mechanism_magnitude():
     x = np.arange(len(d))
     ax.bar(x, d.rel_shift, color=F.c("blue"), width=0.62)
     ax.set_xticks(x)
-    ax.set_xticklabels(lbl, fontsize=5.5)
+    ax.set_xticklabels(lbl, fontsize=8)
     ax.set_ylabel("$\\|\\bar{x}_{\\mathrm{cent}}-\\bar{x}_{\\mathrm{unif}}\\|\\,/\\,\\sigma_{\\mathrm{pop}}$")
     ax.set_ylim(0, max(0.35, d.rel_shift.max() * 1.15))
     ax.grid(axis="y", color=F.c("grey"), alpha=0.3)
@@ -151,7 +151,7 @@ def fig_density_law():
     ax.set_xlabel("landscape autocorrelation  (lower = more rugged)")
     ax.set_ylabel("preference for dense\n(rank$_{K=4}$ $-$ rank$_{K=59}$)")
     ax.set_title("Spearman $\\rho=%.2f$, $p=%.1e$, $n=%d$" % (rho, p, len(d)),
-                 fontsize=7)
+                 fontsize=8)
     ax.legend(loc="upper right", ncol=1)
     fig.tight_layout()
     return F.save(fig, "fig_density_law", os.path.join(ROOT, "paper/figures"))
@@ -190,7 +190,7 @@ def fig_ranks():
     ax.grid(axis="x", color=F.c("grey"), alpha=0.3)
     ax.set_axisbelow(True)
     for i, (v, e) in enumerate(zip(mr, se)):
-        ax.text(v + e + 0.06, i, f"{v:.2f}", va="center", fontsize=6)
+        ax.text(v + e + 0.06, i, f"{v:.2f}", va="center", fontsize=8)
     fig.tight_layout()
     return F.save(fig, "fig_ranks", os.path.join(ROOT, "paper/figures"))
 
@@ -237,17 +237,17 @@ def fig_equivalence():
             ax.hlines(i, r.lo90, r.hi90, color=col, lw=1.0)
             ax.plot(r.delta, i, mk, color=col, mfc="white", mew=0.8, ms=2.8)
         n_eq = int((t.verdict == "equivalent").sum())
-        ax.set_title(f"{label}: {n_eq}/{len(t)} equivalent", fontsize=7)
+        ax.set_title(f"{label}: {n_eq}/{len(t)} equivalent", fontsize=8)
         ax.set_xlabel("Cliff's $\\delta$ with 90% CI")
         ax.set_xlim(-0.75, 0.75)
         ax.invert_yaxis()
         ax.tick_params(axis="y", length=0)
     axes[0].set_yticks(np.arange(len(panels[0][1])))
-    axes[0].set_yticklabels(panels[0][1].f, fontsize=5.5)
+    axes[0].set_yticklabels(panels[0][1].f, fontsize=8)
 
     handles = [plt.Line2D([], [], color=c, marker=m, ls="-", mfc="white",
                           mew=0.8, ms=3, label=k) for k, (c, m) in style.items()]
-    axes[-1].legend(handles=handles, loc="lower right", fontsize=6)
+    axes[-1].legend(handles=handles, loc="lower right", fontsize=8)
     fig.tight_layout(w_pad=0.5)
     return F.save(fig, "fig_equivalence", os.path.join(ROOT, "paper/figures"))
 
@@ -312,12 +312,12 @@ def fig_calibration():
         ax.hlines(i, r["lo"], r["hi"], color=col, lw=1.8)
         ax.plot(r["mean"], i, "o", color=col, mfc="white", mew=1.0, ms=4)
         ax.text(r["mean"], i - 0.26, f"{r['mean']:+.3f}", ha="center",
-                fontsize=6, color=col)
+                fontsize=8, color=col)
     ax.set_yticks(y)
     ax.set_yticklabels([r["label"] for r in rows])
     ax.invert_yaxis()
     ax.set_xlabel("Cliff's $\\delta$: published score $-$ permuted score")
-    ax.legend(loc="lower right", fontsize=6)
+    ax.legend(loc="lower right", fontsize=8)
     fig.tight_layout()
     return F.save(fig, "fig_calibration", os.path.join(ROOT, "paper/figures"))
 

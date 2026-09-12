@@ -13,13 +13,13 @@ centrality, PageRank---or other graph families behave the same way is untested
 here. We regard this as the principal limitation: the instrument is general,
 the evidence covers two algorithm families.
 
-The two targets differ in what their scores are computed from, deliberately:
-centrality is a property of the graph alone, quality a property of the run's
-own history. That they yield different outcomes under the same control is part
-of the calibration, but it also means neither should be read as representative
-of score weighting in general.
+The two targets differ in what their scores are computed from: centrality is a
+property of the graph alone, quality a property of the run's own history. That
+they yield different outcomes under the same control is part of the
+calibration, but it also means neither is representative of score weighting in
+general.
 
-Two considerations bear on how far the result plausibly extends. The argument
+Two considerations bear on how far the result extends. The argument
 of Section~\ref{sec:discussion} turns on the graph being fixed before the
 first evaluation and unrelated to the objective, which is true of every
 Watts--Strogatz-based method we are aware of. And two independently designed
@@ -84,11 +84,3 @@ than unnecessary. The primary contrast is run at all three dimensions we do
 report; the density and adaptive arms are run at $D\in\{10,30\}$, since the
 $7{,}350$-run sweep already covers density at $D\in\{10,30,50\}$.
 
-\subsection{Reproducibility}
-
-Every run is stored individually, keyed by arm, function, dimension and seed,
-and every figure and table is produced by a script from those files. Seeds are
-shared across arms so all comparisons are paired. Runs were executed on one
-machine with a fixed software environment; we report the parallel throughput
-measurements that determined the scheduling, since they affect wall-clock
-figures but not results.

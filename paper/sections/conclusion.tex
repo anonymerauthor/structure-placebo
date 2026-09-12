@@ -3,33 +3,27 @@
 
 Score-weighted metaheuristics are justified by a causal claim---that a
 per-neighbour score, computed on the population graph or on the run's own
-history, carries information about where to search---which the usual evidence,
-an ablation, cannot establish. An
-ablation deletes the component and so changes the optimizer's mixing operator
-along with the information it carries; the resulting difference is consistent
-with the weights having been merely unequal.
+history, carries information about where to search---which an ablation cannot
+establish, because deleting the component changes the mixing operator along
+with the information it carries.
 
 We defined two controls that keep the mechanism running at full strength and
-destroy only the information it is claimed to use, and characterised them.
-Permuting a structural score across nodes yields an operator that equals
-uniform mixing in expectation while retaining the original's weight
-heterogeneity in every realisation (Proposition~\ref{prop:mean}), which is
-exactly the separation an ablation fails to make. A leverage bound
-(Proposition~\ref{prop:leverage}) states when such a comparison is informative
-at all, factoring the displacement a weighting induces into a structural and a
-populational term, and identifying the topologies on which the mechanism is
-inert by construction.
+destroy only the information it is claimed to use. Permuting a score across
+nodes yields an operator that equals uniform mixing in expectation while
+retaining the original's weight heterogeneity in every realisation
+(Proposition~\ref{prop:mean}), which is exactly the separation an ablation
+fails to make; a leverage bound (Proposition~\ref{prop:leverage}) states when
+such a comparison is informative at all and identifies the topologies on which
+the mechanism is inert by construction.
 
-Applied to a published betweenness-weighted small-world optimizer, the controls
-give a clear answer. The mechanism is active, displacing each update by a
-quarter to a third of the population's spread. Its assignment of scores to
-graph positions is not: across $104$ function comparisons on two suites, three
-dimensions and five budgets, permutation changes nothing that survives
-correction, and at suite level the effect is statistically equivalent to zero
-within a margin four times stricter than the negligibility threshold.
-Separating the two properties an ablation confounds shows why: unequal weights
-help slightly, on $3$ of $28$ functions, while which neighbour receives the
-large weight matters on none.
+Applied to a published betweenness-weighted optimizer, the controls give a
+clear answer. The mechanism is active, displacing each update by a quarter to a
+third of the population's spread. Its assignment of scores to graph positions
+is not: across $104$ function comparisons on two suites, three dimensions and
+five budgets, permutation changes nothing that survives correction, and at
+suite level the effect is equivalent to zero within a margin four times
+stricter than negligibility. Unequal weights help slightly, on $3$ of $28$
+functions; which neighbour receives the large weight matters on none.
 
 A null result of this kind is only as good as the test's ability to return a
 non-null one, so we calibrated the instrument on four further mechanisms,

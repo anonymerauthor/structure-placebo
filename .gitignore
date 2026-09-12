@@ -26,3 +26,17 @@ paper/main.pdf
 HANDOFF.md
 STATUS.md
 state*.tar.gz
+# Built submission PDFs; regenerate from paper/ sources.
+submission/
+paper/*.pdf
+!paper/figures/*.pdf
+paper/*.buildlog
+# Submission materials carrying author identity. The manuscript is
+# double-blind and points reviewers at this repository, so these stay local.
+paper/coverletter.tex
+paper/titlepage.tex
+submission/
+
+# Publisher boilerplate dropped in locally; not ours to redistribute, and the
+# sample cover letter in it carries author information.
+template/

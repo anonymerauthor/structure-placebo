@@ -1,4 +1,4 @@
-\documentclass[journal]{IEEEtran}
+\documentclass[lettersize,journal]{IEEEtran}
 
 \usepackage{amsmath,amssymb}
 \usepackage{amsthm}
@@ -28,7 +28,7 @@ Score-Weighted Metaheuristics}
 \author{Anonymous Author%
 \thanks{Manuscript prepared \today.}}
 
-\markboth{IEEE Transactions on Evolutionary Computation}%
+\markboth{IEEE Transactions on Evolutionary Computation,~Vol.~XX, No.~X, 2026}%
 {Permutation Controls for Score-Weighted Metaheuristics}
 
 \maketitle
@@ -36,36 +36,25 @@ Score-Weighted Metaheuristics}
 \begin{abstract}
 Many population-based optimizers weight interactions by a per-neighbour
 score---a centrality on the population graph, the quality of a neighbour's
-best---on the claim that the score identifies informative agents. The usual
-evidence is an ablation, which cannot establish that claim: deleting the
-weighting changes the mixing operator as well as the information it carries,
-so any difference is equally consistent with the weights having been merely
-unequal. We separate the two by permuting the score across nodes, which leaves
-the mechanism at full strength and destroys only the correspondence between a
-node's position and its weight. We prove this control equals uniform mixing in
-expectation while retaining the original's weight heterogeneity pathwise, and
-bound when such a comparison is informative at all. A second control randomises
-an adaptive component's selection rule. On a published betweenness-weighted
-small-world optimizer the mechanism proves active---displacing each update by a
-third of the population's spread---and uninformative: over $104$ function
-comparisons on two suites, three dimensions and five budgets, permutation
-changes nothing that survives correction. Unchanged, the same instrument
-returns a uniformly beneficial effect on one further mechanism, a uniformly
-harmful one on another, and---on a second published optimizer, the fully
-informed particle swarm---a quality weighting whose per-function effects reach
-$|\delta|=1$ in \emph{both} directions and cancel in the mean. The null is
-therefore a property of the mechanism, not of a test without power. The last
-case also carries a methodological lesson: a suite average alone calls it and
-the centrality null the same thing, while per-function correction alone hid a
-real effect in our own adaptive scheme, so both views are needed. Separating
-the properties an ablation confounds shows unequal weights help on $3$ of $28$
-functions while the assignment helps on none, so betweenness---about $30\%$ of
-runtime---can be replaced by any heterogeneous weighting at no cost.
+best---claiming the score identifies informative agents. The usual evidence is
+an ablation, which cannot establish that claim: deleting the weighting changes
+the mixing operator as well as the information it carries. We separate the two
+by permuting the score across nodes, leaving the mechanism at full strength and
+destroying only the correspondence between a node's position and its weight. We
+prove this control equals uniform mixing in expectation while retaining the
+original's weight heterogeneity pathwise, and bound when the comparison is
+informative at all. On a published betweenness-weighted optimizer the mechanism
+proves active yet uninformative: over $104$ function comparisons on two suites,
+three dimensions and five budgets, permutation changes nothing that survives
+correction. Unchanged, the instrument returns four further outcomes, among them
+a quality weighting in the fully informed particle swarm whose per-function
+effects reach $|\delta|=1$ in both directions and cancel in the mean. A null
+from a test with that range is a property of the mechanism, not of low power.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Metaheuristics, ablation studies, experimental methodology, swarm
-intelligence, network topology, reproducibility.
+Ablation studies, experimental methodology, permutation tests, reproducibility,
+swarm intelligence.
 \end{IEEEkeywords}
 
 \IEEEpeerreviewmaketitle
@@ -88,6 +77,14 @@ every figure and table in this paper are available at
 \url{https://github.com/anonymerauthor/structure-placebo}. Each run is stored as an individual
 record keyed by (variant, function, dimension, seed), so any single number
 in the paper can be traced to the run that produced it.
+
+\section*{Acknowledgment}
+In line with IEEE policy the author discloses that Claude (Anthropic) was used
+for language editing and drafting assistance, and for implementation assistance
+in parts of the experimental code. The research question, design, protocol,
+analyses and conclusions are the author's own; all AI-assisted code and text
+were reviewed and tested by the author, who takes full responsibility for the
+content.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}

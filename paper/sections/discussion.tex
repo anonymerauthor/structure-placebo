@@ -69,25 +69,21 @@ adaptive route beats its own randomisation on $24$ of $28$ functions.
 We built \textsc{Ads} and subjected it to the same policy control we would ask
 of anyone else. It passes: informed selection beats uniform switching over the
 same densities by $\bar{\delta}=-0.101$, $p=1.5\times10^{-5}$, on $24$ of $28$
-functions. Adapting neighbourhood density online is doing real work, and the
-benefit is not merely from varying density, which both arms share.
+functions, so the benefit is not merely from varying density, which both arms
+share.
 
-Reaching that conclusion required correcting our own first reading. Judged by
-per-function Holm-corrected tests, \textsc{Ads} wins on $3$ of $28$, which we
-initially reported as a weak effect. The correction is instructive rather than
-embarrassing: Holm across $28$ comparisons is conservative, and a benefit
-spread thinly across a suite fails it while being obvious in aggregate. The
-diagnostic is the direction count---$24$ of $28$ is not what noise produces---and
-it is visible only when the suite is treated as the unit of analysis. We
-therefore report both views throughout, and would encourage the same of others:
-a per-function table alone can hide a real effect just as a suite mean alone
-can hide a concentrated one.
+Reaching that conclusion required correcting our own first reading. Under
+per-function Holm correction \textsc{Ads} wins on $3$ of $28$, which we
+initially took for a weak effect; correction across $28$ comparisons is
+conservative, and a benefit spread thinly across a suite fails it while being
+obvious in aggregate. The diagnostic is the direction count, visible only when
+the suite is the unit of analysis. Section~\ref{sec:target2:views} gives the
+mirror case.
 
-The three contrasts together also say something about the optimizer under
-study. Its two weighting mechanisms, centrality and fitness influence, are
-respectively null and weak at suite level, while the structural choice that is
-not a weighting---how many neighbours each agent sees---carries a clear effect.
-The information in this algorithm lives in the coarse topology, not in the
+The contrasts together also say something about the optimizer under study. Its
+two weighting mechanisms are null and weak at suite level, while the structural
+choice that is not a weighting---how many neighbours each agent sees---carries
+a clear effect. The information here lives in the coarse topology, not in the
 scores computed on it.
 
 \subsection{Implications for evaluation practice}

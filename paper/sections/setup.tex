@@ -61,58 +61,19 @@ Population size is $N=60$ throughout. Seeds are $0,1,\dots$ shared across
 arms, so every comparison is paired: an arm and its control start from the
 same population and consume the same random stream.
 
-\subsection{Corrections to the reference implementation}
+\subsection{Corrections, implementation and cost}
 \label{sec:corrections}
 
 Three defects in the published implementation affect measurement and are
-corrected here; we report them because they bear on the comparability of our
-numbers with the original.
+corrected here: the fixed-dimension functions $F_{14}$--$F_{23}$ are
+evaluated at $D=30$ although their implementations use only the first two to
+six coordinates, leaving up to $28$ dimensions inert; neighbourhood size is
+set per function category, which is per-instance tuning; and the rewiring
+routine catches an exception class that does not cover the one
+\texttt{double\_edge\_swap} raises, so dense graphs crash the optimizer.
 
-First, the fixed-dimension functions $F_{14}$--$F_{23}$ are evaluated at
-$D=30$ although their implementations slice the first two to six coordinates,
-leaving up to $28$ dimensions inert. We run each at its native dimension.
-Second, neighbourhood size is set per function category, which is per-instance
-tuning; we hold $N$ and the schedule fixed across functions. Third, the
-rewiring routine catches only \texttt{NetworkXError} while
-\texttt{double\_edge\_swap} raises \texttt{NetworkXAlgorithmError}, which is
-not a subclass, so dense graphs crash the optimizer; we widen the handler.
-
-\subsection{Implementation and equivalence to the reference}
-\label{sec:impl}
-
-The per-node update loop is the dominant cost of the reference implementation.
-We replaced it by the sparse-matrix form of \eqref{eq:master}, caching the
-adjacency pattern and rebuilding it only when the graph is rewired. Since
-edge swaps preserve both edge count and degree sequence, neither is a valid
-cache key; we invalidate on an explicit rewiring counter.
-
-We verified equivalence before using the fast path for any reported result.
-A single diffusion step matches the reference to $8.9\times10^{-16}$ across
-eight configurations (both weighting modes, both boundary-repair modes, with
-and without the synchronisation step); vectorized boundary repair matches
-exactly; and over $15$ complete runs the two paths produce identical
-distributions of final fitness. The speedup is $2.6\times$, bounded above by
-about $3.4\times$ because the update loop is roughly $71\%$ of runtime.
-
-\subsection{Hardware, cost, and scheduling}
-\label{sec:hardware}
-
-All runs execute on one machine: an Intel Core i7-12700H, $14$ cores
-($6$ performance, $8$ efficiency), $32$~GB. We measured parallel throughput
-before scheduling: it saturates at about $7\times$ around $16$ workers, and
-$20$ workers are slower than $16$ ($6.9\times$ against $7.1\times$) while
-per-task latency nearly triples. Long batches therefore run on six worker
-processes, which delivers roughly $80\%$ of peak throughput with no
-degradation in per-run latency.
-
-Parallelism uses independent sharded processes rather than a worker pool: on
-this machine the pool backend fails intermittently during process spawn with
-a Windows handle-duplication error. Each run checkpoints to its own file
-keyed by (arm, function, dimension, seed), so sharding is equivalent to
-pooling, interrupted batches resume without repeating work, and any reported
-number is traceable to the run that produced it.
-
-Cost varies by more than twentyfold across CEC2017: from $12$~s per run on the
-unimodal functions to $213$~s on $F_{25}$, with composition functions
-averaging $81$~s at $D=30$. Estimates in this paper are therefore weighted by
-the suite's actual composition rather than extrapolated from a measured rate.
+The supplementary material states each correction, reports the equivalence
+check of our vectorized update against the reference path
+($8.9\times10^{-16}$ per diffusion step, identical run distributions), and
+gives the hardware, the measured parallel throughput and the twentyfold
+spread of per-run cost across the suite.

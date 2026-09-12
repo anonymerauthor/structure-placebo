@@ -1,0 +1,190 @@
+\documentclass[lettersize,journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{cite}
+
+\graphicspath{{figures/}}
+
+\newcommand{\permcontrol}{\textsc{Perm}}
+\newcommand{\polcontrol}{\textsc{Rand}}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\begin{document}
+
+\title{Supplementary Material for\\
+``Does the Score Do the Work? Permutation Controls for\\
+Score-Weighted Metaheuristics''}
+
+\author{}
+\markboth{Supplementary Material}{}
+\maketitle
+
+\section{Per-Function Results on CEC2017}
+\label{sec:supp:tables}
+
+Table~\ref{tab:cec30} gives the median error of every arm on every
+function of the suite at $D=30$, from which the suite-level summaries in the
+main text are computed. Bold marks the best arm and any arm not distinguishable
+from it by a paired Wilcoxon test at $\alpha=0.05$.
+
+\input{tables/cec2017_D30}
+
+\section{Per-Function Effect Sizes}
+\label{sec:supp:forest}
+
+Fig.~\ref{fig:supp:forest} shows the effect of destroying the structure--weight
+correspondence on each function separately, with bootstrap intervals, for every
+suite and budget. The main text reports only the suite-level summaries of these
+distributions. No interval excludes zero after Holm correction in any panel.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_placebo_forest}
+\caption{Published method against its permutation control, per function, with
+bootstrap intervals. Shading marks the negligible band $|\delta|<0.147$.}
+\label{fig:supp:forest}
+\end{figure*}
+
+\section{Equivalence Testing, Per Function}
+\label{sec:supp:tost}
+
+A difference test can only fail to reject; equivalence has to be shown. An
+interval lying wholly inside the margin establishes it, one straddling the
+margin leaves the question open, and Fig.~\ref{fig:supp:equiv} makes the
+distinction visible. Most intervals straddle the boundary, which is why the
+main text makes its equivalence claim at suite level and, per function, only at
+the small-effect margin.
+
+Raising the run count from $30$ to the $51$ the CEC2017 protocol prescribes
+narrows the median $90\%$ half-width from $0.181$ to $0.139$---exactly the
+$\sqrt{30/51}$ the sampling theory predicts---and raises the count of formally
+equivalent functions from $1$ to $6$ of $28$. It does not raise it further,
+because equivalence at margin $m$ requires
+$|\hat{\delta}|+\text{half-width}<m$ rather than $\text{half-width}<m$. With a
+median $|\hat{\delta}|$ of $0.063$, the median function would need roughly
+$100$ runs; on $4$ of $28$ the point estimate already exceeds $0.147$, so no
+sample size places them inside that band.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_equivalence}
+\caption{Equivalence testing per function, published method against its
+permutation control, at two dimensions. An interval contained in the shaded
+margin establishes equivalence at $\alpha=0.05$.}
+\label{fig:supp:equiv}
+\end{figure*}
+
+\section{Mean Ranks}
+\label{sec:supp:ranks}
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_ranks}
+\caption{Mean Friedman ranks on CEC2017 at $D=30$, with standard errors over
+the $28$ functions. The published method and its permutation control are
+adjacent and overlapping.}
+\label{fig:supp:ranks}
+\end{figure}
+
+\section{Neighbourhood Density}
+\label{sec:supp:density}
+
+A sweep over $K\in\{4,8,16,32,59\}$ across $49$ problem configurations at their
+native dimensions, $7{,}350$ runs, finds neighbourhood size to matter in $30$
+of $49$ (Friedman $p<0.05$), with rank spreads up to $3.9$ of a possible $5$
+and $p$ as small as $2\times10^{-23}$. Where it matters the effect is large; in
+the remaining $19$ configurations it is undetectable.
+
+Fig.~\ref{fig:supp:density} relates the preferred density to landscape
+ruggedness, measured as the lag-one autocorrelation of fitness along a random
+walk and therefore computable online. The association is moderate
+($\rho_{s}=-0.61$, $p=3.7\times10^{-4}$), carried largely by the most rugged
+functions, and it vanishes at $D=10$ ($\rho_{s}=-0.15$, $p=0.63$) while holding
+at $D=30$ ($-0.73$) and $D=50$ ($-0.63$). \textsc{Penalized} and
+\textsc{Penalized2} are clear counterexamples, smooth by the proxy yet
+preferring the densest neighbourhood at every dimension.
+
+\begin{figure}[t]
+\centering
+\includegraphics{fig_density_law}
+\caption{Preference for dense neighbourhoods against landscape ruggedness, over
+the configurations in which density has a significant effect.}
+\label{fig:supp:density}
+\end{figure}
+
+\section{Implementation and Its Verification}
+\label{sec:supp:impl}
+
+The per-node update loop dominates the reference implementation's cost. We
+replaced it by the sparse-matrix form of the master update, caching the
+adjacency pattern and rebuilding it only when the graph is rewired. Edge swaps
+preserve both edge count and degree sequence, so neither is a valid cache key;
+we invalidate on an explicit rewiring counter.
+
+Equivalence was verified before the fast path was used for any reported result.
+A single diffusion step matches the reference to $8.9\times10^{-16}$ across
+eight configurations---both weighting modes, both boundary-repair modes, with
+and without the synchronisation step. Vectorized boundary repair matches
+exactly. Over $15$ complete runs the two paths produce identical distributions
+of final fitness. The speedup is $2.6\times$, bounded above by about
+$3.4\times$ because the update loop is roughly $71\%$ of runtime.
+
+\section{Hardware, Cost and Scheduling}
+\label{sec:supp:hardware}
+
+All runs execute on one machine: an Intel Core i7-12700H, $14$ cores
+($6$ performance, $8$ efficiency), $32$~GB. Parallel throughput was measured
+before scheduling: it saturates at about $7\times$ around $16$ workers, and
+$20$ workers are slower than $16$ ($6.9\times$ against $7.1\times$) while
+per-task latency nearly triples. Long batches therefore run on six worker
+processes, which delivers roughly $80\%$ of peak throughput with no degradation
+in per-run latency.
+
+Parallelism uses independent sharded processes rather than a worker pool: on
+this machine the pool backend fails intermittently during process spawn with a
+Windows handle-duplication error. Each run checkpoints to its own file keyed by
+(arm, function, dimension, seed), so sharding is equivalent to pooling,
+interrupted batches resume without repeating work, and any reported number is
+traceable to the run that produced it.
+
+Cost varies by more than twentyfold across CEC2017: from $12$~s per run on the
+unimodal functions to $213$~s on $F_{25}$, with composition functions averaging
+$81$~s at $D=30$. Runtime estimates are therefore weighted by the suite's
+actual composition rather than extrapolated from a measured rate, a
+distinction that matters by a factor of three to five.
+
+\section{Corrections to the Audited Implementation}
+\label{sec:supp:corrections}
+
+Three defects in the published implementation affect measurement and are
+corrected here; we report them because they bear on the comparability of our
+numbers with the original.
+
+First, the fixed-dimension functions $F_{14}$--$F_{23}$ are evaluated at
+$D=30$ although their implementations slice the first two to six coordinates,
+leaving up to $28$ dimensions inert. We run each at its native dimension.
+Second, neighbourhood size is set per function category, which is per-instance
+tuning; we hold the population size and the schedule fixed across functions.
+Third, the rewiring routine catches only \texttt{NetworkXError} while
+\texttt{double\_edge\_swap} raises \texttt{NetworkXAlgorithmError}, which is
+not a subclass, so dense graphs crash the optimizer; we widen the handler.
+
+\section{Reproducibility}
+\label{sec:supp:repro}
+
+Every run is stored individually, keyed by arm, function, dimension and seed,
+and every figure and table is produced by a script from those files. Seeds are
+shared across arms so all comparisons are paired. The audited implementation is
+published without a licence and is therefore not redistributed; the repository
+carries the complete $93$-line patch against it, and the setup steps that fetch
+and apply it.
+
+\end{document}
